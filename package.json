@@ -1,0 +1,42 @@
+{
+  "name": "generator-generic-service",
+  "version": "0.0.0",
+  "description": "Micro service skeleton",
+  "homepage": "https://github.com/sunsetriders/generator-generic-service",
+  "author": {
+    "name": "Daitan Group",
+    "email": "gvillalta@daitangroup.com",
+    "url": "http://www.daitangroup.com"
+  },
+  "files": [
+    "generators"
+  ],
+  "main": "generators/index.js",
+  "keywords": [
+    "yeoman-generator"
+  ],
+  "dependencies": {
+    "chalk": "^1.0.0",
+    "valid-url": "^1.0.9",
+    "yeoman-generator": "^0.23.0",
+    "yosay": "^1.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^3.1.1",
+    "eslint-config-google": "^0.7.0",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.1.2",
+    "nsp": "^2.6.2",
+    "yeoman-assert": "^2.0.0",
+    "yeoman-test": "^1.0.0"
+  },
+  "repository": "sunsetriders/generator-generic-service",
+  "scripts": {
+    "prepublish": "npm run nsp",
+    "test": "npm run lint && npm run nsp && npm run test:coverage",
+    "lint": "eslint .",
+    "nsp": "nsp check --output checkstyle",
+    "test:coverage": "istanbul cover _mocha -- -u exports -R spec test/**/*"
+  },
+  "private": true
+}

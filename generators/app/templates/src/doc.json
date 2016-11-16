@@ -1,0 +1,260 @@
+{
+  "swagger": "2.0",
+    "info": {
+      "title": "<%= userviceName %>",
+      "version": "1.0.0",
+      "description": "A micro service skeleton"
+    },
+    "basePath": "/api/v1",
+    "schemes": [
+      "http",
+      "https"
+    ],
+    "consumes": [
+      "application/json"
+    ],
+    "produces": [
+      "application/json"
+    ],
+    "securityDefinitions": {
+      "ApiKeySecurity": {
+        "type": "apiKey",
+        "description": "A validation token must be provided in the header to perform a valid API call. The name and value for the token must be agreed to both Service micro-service and the client side.",
+        "name": "api_key",
+        "in": "header"
+      }
+    },
+    "definitions": {
+      "ErrorItem": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "field": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ]
+      },
+      "Users": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "userPrincipalName": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "firstName",
+          "lastName",
+          "username",
+          "email",
+          "userPrincipalName"
+        ]
+      }
+    },
+    "parameters": {
+      "PaginationPageParam": {
+        "name": "page",
+        "in": "query",
+        "description": "Pagination page, default is 1.",
+        "required": false,
+        "type": "number"
+      },
+      "PaginationLimitParam": {
+        "name": "limit",
+        "in": "query",
+        "description": "Pagination limit, default is 100",
+        "required": false,
+        "type": "number"
+      },
+      "SearchParam": {
+        "name": "q",
+        "in": "query",
+        "description": "Search terms",
+        "required": false,
+        "type": "string"
+      },
+      "OrderParam": {
+        "name": "order",
+        "in": "query",
+        "description": "Fields to order by",
+        "required": false,
+        "type": "string"
+      },
+      "UserInfoParam": {
+        "name": "userInfo",
+        "in": "body",
+        "description": "Complete user information",
+        "required": true,
+        "schema": {
+          "$ref": "#/definitions/UserInfo",
+          "example": {
+            "firstName": "John",
+            "lastName": "Doe",
+            "userName": "john.doe.1",
+            "email": "john.doe@company.inc",
+            "userPrincipalName": "john.doe.1@test.int"
+          }
+        }
+      }
+    },
+    "responses": {
+      "ListUsersResponse": {
+        "description": "Successful response from Service listing its users",
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Users"
+          }
+        }
+      },
+      "SuccessResponse": {
+        "description": "Operation was successful",
+        "examples": {
+          "application/json": ""
+        }
+      },
+      "Created": {
+        "description": "Request to provision was successful."
+      },
+      "Unauthorized": {
+        "description": "Unauthorized. Invalid authorization token",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "errors": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ErrorItem"
+              }
+            }
+          }
+        },
+        "examples": {
+          "application/json": {
+            "errors": [
+              {
+                "message": "Header with invalid token",
+                "field": "token"
+              }
+            ]
+          }
+        }
+      },
+      "Conflict": {
+        "description": "Conflict. The request could not be completed due to a conflict with the current state of the target resource.",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "errors": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ErrorItem"
+              }
+            }
+          }
+        },
+        "examples": {
+          "application/json": {
+            "errors": [
+              {
+                "message": "User already provisioned"
+              }
+            ]
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "Internal Server Error. An unexpected condition prevented the service from fulfilling the request.",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "errors": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ErrorItem"
+              }
+            }
+          }
+        },
+        "examples": {
+          "application/json": {
+            "errors": [
+              {
+                "message": "Service API is offline"
+              }
+            ]
+          }
+        }
+      },
+      "BadRequest": {
+        "description": "Bad Request. Validation failed for input body parameters.",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "errors": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ErrorItem"
+              }
+            }
+          }
+        },
+        "examples": {
+          "application/json": {
+            "errors": [
+              {
+                "message": "Missing field",
+                "field": "email"
+              }
+            ]
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Not Found. The server has not found anything matching the identifier.",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "errors": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ErrorItem"
+              }
+            }
+          }
+        },
+        "examples": {
+          "application/json": {
+            "errors": [
+              {
+                "message": "Not Found"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "paths": {
+    },
+    "tags": [
+    ]
+}

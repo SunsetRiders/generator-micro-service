@@ -1,0 +1,50 @@
+# Folder view configuration files
+.DS_Store
+Desktop.ini
+
+# Thumbnail cache files
+._*
+Thumbs.db
+
+# Files that might appear on external disks
+.Spotlight-V100
+.Trashes
+
+#vim and tern
+.tern-project
+*.swp
+
+### Application specific files
+# Logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Compiled binary addons (http://nodejs.org/api/addons.html)
+build/Release
+
+# Dependency directories
+node_modules
+bower_components
+
+# Sass cache files
+.sass-cache
+
+# App local environment configuration
+.env
+
+# Compiled files
+public
+*.css
+*.css.map
+rev-manifest.json
+dist/
+/coverage/
+
+# RethinkDB
+rethinkdb_data/
+rethinkdb_data/log_file
+rethinkdb_data/metadata

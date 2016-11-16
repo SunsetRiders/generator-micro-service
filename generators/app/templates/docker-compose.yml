@@ -1,0 +1,40 @@
+version: '2'
+services:
+  rethinkdb:
+    image: rethinkdb
+    mem_limit: 800m
+    ports:
+      - '28015:28015' # Client Driver connection
+      - '29015:29015' # Intracluster connections
+      - '8080:8080' # Administrative HTTP connections
+  postgres:
+    image: postgres
+    ports:
+      - '5432:5432'
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["npm", "run", "start:api"]
+    ports:
+      - '3000:3000'
+    links:
+      - rethinkdb
+    env_file:
+      - .env.example
+    environment:
+      - RETHINKDB_HOST=rethinkdb
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["npm", "test"]
+    volumes:
+      - '.:/usr/src/app'
+    links:
+      - rethinkdb
+    env_file:
+      - .env.example
+    environment:
+      - RETHINKDB_HOST=rethinkdb
+      - NODE_ENV=test
