@@ -98,22 +98,6 @@
         "description": "Fields to order by",
         "required": false,
         "type": "string"
-      },
-      "UserInfoParam": {
-        "name": "userInfo",
-        "in": "body",
-        "description": "Complete user information",
-        "required": true,
-        "schema": {
-          "$ref": "#/definitions/UserInfo",
-          "example": {
-            "firstName": "John",
-            "lastName": "Doe",
-            "userName": "john.doe.1",
-            "email": "john.doe@company.inc",
-            "userPrincipalName": "john.doe.1@test.int"
-          }
-        }
       }
     },
     "responses": {
