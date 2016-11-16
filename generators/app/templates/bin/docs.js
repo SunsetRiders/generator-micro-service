@@ -16,6 +16,9 @@ const writeFile       = Promise.promisify(fs.writeFile);
 
 const options     = {
   uri: host + version + '/api-docs',
+  headers: {
+    api_key: config.api.key
+  },
   json: false
 };
 
