@@ -22,13 +22,15 @@ const options     = {
   json: false
 };
 
-Promise.try(function() {
-  console.log('Generating the swagger.yaml docs');
-  return api.start();
-}).then(()         => rp(options))
+console.log('Generating the swagger.yaml docs');
+
+Promise.try(() => api.start())
+  .then(()       => rp(options))
   .then(response => YAML.stringify(JSON.parse(response)))
   .then(yaml     => writeFile(swaggerFilePath, yaml, 'utf8'))
-  .then(function() {
-    console.log('swagger.yaml updated.');
-    api.stop();
-  }).catch(() => process.exit(1));
+  .then(()       => console.log('swagger.yaml updated.'))
+  .then(()       => api.stop())
+  .catch(err     => {
+    console.log(err);
+    process.exit(1);
+  });
