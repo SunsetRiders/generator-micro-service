@@ -13,7 +13,7 @@ module.exports = function(app) {
   return {
     apiDoc: apiDoc,
     app:    app,
-    routes: routesPath,
+    paths: routesPath,
     securityHandlers: {
       ApiKeySecurity: apiKeySecurity
     },
@@ -23,4 +23,3 @@ module.exports = function(app) {
     errorMiddleware: genericErrorHandler
   };
 };
-
