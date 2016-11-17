@@ -1,0 +1,13 @@
+---
+docker:
+  servers:
+  - server:
+      unique_name: <%= serverName %>
+      vendor: digitalocean
+      key_name: DigitalOcean
+      region: sfo1
+      size: 512mb
+  configuration:
+    has_deploy_hooks: false
+    docker_version: 1.12.3
+    weave_version: 1.7.2

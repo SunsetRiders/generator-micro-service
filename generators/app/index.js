@@ -230,6 +230,7 @@ module.exports = generators.Base.extend({
     }, {
       local: require.resolve('generator-git-init'),
     });
+    this.composeWith('generic-service:cloud66', {}, {});
     this.installDependencies({bower: false});
   },
 });
