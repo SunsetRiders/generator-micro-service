@@ -225,6 +225,11 @@ module.exports = generators.Base.extend({
   },
 
   install: function() {
+    this.composeWith('git-init', {
+      options: {commit: '[init]' + this.props.userviceName + ' barebones - created.'},
+    }, {
+      local: require.resolve('generator-git-init'),
+    });
     this.installDependencies({bower: false});
   },
 });
