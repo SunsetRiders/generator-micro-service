@@ -207,7 +207,6 @@ module.exports = generators.Base.extend({
     this.props.c66Environments.forEach((env) => {
       const context = _.assign({}, this.props, this.props.environments[env],
         this.options);
-      this.log(context);
       this.fs.copyTpl(
         this.templatePath('manifest.yml'),
         this.destinationPath('manifest.' + env + '.yml'),
@@ -237,9 +236,5 @@ module.exports = generators.Base.extend({
       }, {});
 
     this.fs.extendJSON(this.destinationPath('package.json'), {scripts: scripts});
-  },
-
-  debug: function() {
-    console.log(this.props);
   },
 });
