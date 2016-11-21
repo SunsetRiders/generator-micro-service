@@ -230,6 +230,16 @@ module.exports = generators.Base.extend({
     }, {
       local: require.resolve('generator-git-init'),
     });
+    this.composeWith(
+      'generic-service:cloud66',
+      {
+        options: {
+          repoUrl: this.props.githubURI,
+          serviceName: this.props.userviceName,
+        },
+      },
+      {}
+    );
     this.installDependencies({bower: false});
   },
 });

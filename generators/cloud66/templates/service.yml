@@ -1,0 +1,11 @@
+---
+services:
+  api:
+    git_url: <%= repoUrl %>
+    git_branch: master
+    ports:
+    - container: 3000
+      http: 80
+      https: 443
+    command: npm run start:api
+    log_folder: "/usr/src/app/log"
