@@ -1,0 +1,12 @@
+- name: Install test dependencies
+  service: api
+  command: npm install
+- name: Run unit tests
+  service: api
+  command: npm run test:unit
+- name: Run linter
+  service: api
+  command: npm run test:lint
+- name: Generate documentation
+  service: api
+  command: npm run docs

@@ -240,6 +240,15 @@ module.exports = generators.Base.extend({
       },
       {}
     );
+    this.composeWith(
+      'generic-service:codeship',
+      {
+        options: {
+          nodeVersion: this.props.nodeVersion,
+        },
+      },
+      {}
+    );
     this.installDependencies({bower: false});
   },
 });
