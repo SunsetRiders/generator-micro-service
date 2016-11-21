@@ -2,12 +2,28 @@
 docker:
   servers:
   - server:
-      unique_name: <%= serverName %>
-      vendor: digitalocean
-      key_name: DigitalOcean
-      region: sfo1
-      size: 512mb
+<% if (c66ServerName) { -%>
+      unique_name: <%= c66ServerName %>
+<% } -%>
+<% if (c66ServerKeyName) { %>
+      key_name: <%= c66ServerKeyName %>
+<% } -%>
+<% if (c66ServerVendor) { -%>
+      vendor: <%= c66ServerVendor %>
+<% } -%>
+<% if (c66ServerSize) { -%>
+      size: <%= c66ServerSize %>
+<% } -%>
+<% if (c66ServerRegion) { %>
+      region: <%= c66ServerRegion %>
+<% } -%>
+<% if (typeof(c66ServerSubnetId) === 'string' && c66ServerSubnetId !== '') { -%>
+      subnet_id: <%= c66ServerSubnetId %>
+<% } -%>
   configuration:
+<% if (typeof(c66VpcId) === 'string' && c66VpcId !== '') { -%>
+    vpc_id: <%= c66VpcId %>
+<% } -%>
     has_deploy_hooks: false
     docker_version: 1.12.3
     weave_version: 1.7.2
