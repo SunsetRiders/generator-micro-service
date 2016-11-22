@@ -4,7 +4,6 @@ const extend     = require('deep-extend');
 const generators = require('yeoman-generator');
 const mkdirp     = require('mkdirp');
 const path       = require('path');
-const validUrl   = require('valid-url');
 
 const makeGeneratorName = function(name) {
   kebabedName = _.kebabCase(name);
@@ -21,7 +20,7 @@ const validateServiceName = function(str) {
 };
 
 const validateGithubUri = function(str) {
-  return validUrl.isUri(str) && (str.indexOf('github') >= 0);
+  return str.indexOf('git') === 0 && (str.indexOf('github') >= 0);
 };
 
 const formatProjectTags = function(str) {

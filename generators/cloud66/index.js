@@ -52,6 +52,11 @@ const commonQuestions = [
     type: 'list',
     validate: atLeastOne,
     choices: c66ServerAvailableVendors,
+  }, {
+    name: 'c66ServerName',
+    type: 'input',
+    message: 'Cloud66 - Server name:',
+    default: randomWord,
   },
 ];
 
@@ -163,11 +168,6 @@ module.exports = generators.Base.extend({
         default: 'acme',
         store: true,
       }, {
-        name: 'c66ServerName',
-        type: 'input',
-        message: 'Cloud66 - Server name:',
-        default: randomWord,
-      }, {
         name: 'c66Environments',
         type: 'checkbox',
         message: 'Cloud66 - Environment:',
@@ -224,13 +224,16 @@ module.exports = generators.Base.extend({
   cloud66Scripts: function() {
     const scripts = this.props.c66Environments
       .reduce((scripts, env) => {
-        const org = `--org "${this.props.c66OrganizationName}"`;
-        const name = `--name "${this.props.c66NamingPrefix}-${env.slice(0, 4)}-${this.options.serviceName}"`;
-        const serviceYaml = `--service_yaml "./.cloud66/service.${env}.yml"`;
+        const org          = `--org "${this.props.c66OrganizationName}"`;
+        const stackName    = `${this.props.c66NamingPrefix}-${env.slice(0, 4)}-${this.options.serviceName}`;
+        const name         = `--name "${stackName}"`;
+        const serviceYaml  = `--service_yaml "./.cloud66/service.${env}.yml"`;
         const manifestYaml = `--manifest_yaml "./.cloud66/manifest.${env}.yml"`;
 
-        scripts[`cloud66:${env}`] = `cx ${org} stacks create ${name} ` +
+        scripts[`cloud66:${env}:create`] = `cx ${org} stacks create ${name} ` +
           `--environment "${env}" ${serviceYaml} ${manifestYaml}`;
+        scripts[`cloud66:${env}:ssh`] = `cx ssh -s ${stackName} -e ${env}`;
+        scripts[`cloud66:${env}:redeploy`] = `cx redeploy -s ${stackName} -e ${env}`;
 
         return scripts;
       }, {});
