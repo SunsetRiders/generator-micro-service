@@ -1,18 +1,6 @@
 const appConfig = require('getconfig');
 const config    = appConfig.logs;
 
-// Creates the log folder programmatically
-if (config.transports.includes('file') || config.transports.includes('logrotate')) {
-  const fs = require('fs');
-  try {
-    fs.mkdirSync(config.logPath);
-  } catch (e) {
-    if (e.code !== 'EEXIST') {
-      throw e;
-    }
-  }
-}
-
 if (config.transports.includes('logentries') && config.logentriesToken === '') {
   throw new Error('Missing LOGS_LOGENTRIES_TOKEN environment variable');
 }
