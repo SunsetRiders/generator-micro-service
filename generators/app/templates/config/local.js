@@ -74,8 +74,8 @@ module.exports = {
   configName: path.basename(__filename),
   logs: {
     transports: env.array('LOGS_TRANSPORTS', 'string', ['console']),
-    log: 'info',
-    color: false,
+    log: env.string('LOG_LEVEL'),
+    color: env.string('LOGS_COLOR'),
     logentriesToken: env.string('LOGS_LOGENTRIES_TOKEN'),
     blackList: [],
     logPath: path.resolve(appRoot, './log')
