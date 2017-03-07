@@ -10,7 +10,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "<%= githubURI %>"
+    "url": "<%= gitURI %>"
   },
   "scripts": {
     "docs":          "npm run docs:swagger",

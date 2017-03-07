@@ -19,9 +19,8 @@ const validateServiceName = function(str) {
     (str.indexOf('service') >= 0);
 };
 
-const validateGithubUri = function(str) {
-  return str.indexOf('git') === 0 && (str.indexOf('github') >= 0);
-};
+const validateGithubUri = (str) => str.indexOf('git') === 0 ||
+  str.indexOf('http') === 0;
 
 const formatProjectTags = function(str) {
   tagStr = str || '';
@@ -48,10 +47,10 @@ module.exports = generators.Base.extend({
         filter: makeGeneratorName,
         validate: validateServiceName,
       }, {
-        name: 'githubURI',
+        name: 'gitURI',
         type: 'input',
-        message: 'Github URI:',
-        default: 'https://github.com/sunsetriders/service',
+        message: 'git URI:',
+        default: 'https://github.com/',
         validate: validateGithubUri,
       }, {
         name: 'nodeVersion',
@@ -233,7 +232,7 @@ module.exports = generators.Base.extend({
       'generic-service:cloud66',
       {
         options: {
-          repoUrl: this.props.githubURI,
+          repoUrl: this.props.gitURI,
           serviceName: this.props.userviceName,
         },
       },
