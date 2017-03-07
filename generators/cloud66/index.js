@@ -2,7 +2,7 @@ const _          = require('lodash');
 const chalk      = require('chalk');
 const generators = require('yeoman-generator');
 const mkdirp     = require('mkdirp');
-const randomWord = require('random-word');
+const randomWord = require('random-animal-names');
 
 const emptyString = function(str) {
   if (typeof str == 'undefined' ||
@@ -56,7 +56,7 @@ const commonQuestions = [
     name: 'c66ServerName',
     type: 'input',
     message: 'Cloud66 - Server name:',
-    default: randomWord,
+    default: () => _.kebabCase(randomWord.random())
   },
 ];
 

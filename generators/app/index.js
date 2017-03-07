@@ -105,11 +105,11 @@ module.exports = generators.Base.extend({
 
   dotFiles: function() {
     [
-      ['dockerignore', '.dockerignore'],
-      ['env.example', '.env.example'],
-      ['eslintignore', '.eslintignore'],
-      ['eslintrc.js', '.eslintrc.js'],
-      ['gitignore', '.gitignore'],
+      ['_dockerignore', '.dockerignore'],
+      ['_env.example', '.env.example'],
+      ['_eslintignore', '.eslintignore'],
+      ['_eslintrc.js', '.eslintrc.js'],
+      ['_gitignore', '.gitignore'],
       ['_github/PULL_REQUEST_TEMPLATE.md', '.github/PULL_REQUEST_TEMPLATE.md'],
     ].forEach((file) => {
       this.fs.copyTpl(
