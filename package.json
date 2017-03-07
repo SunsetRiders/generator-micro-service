@@ -1,7 +1,7 @@
 {
-  "name": "generator-generic-service",
-  "version": "0.2.2",
-  "description": "Micro service skeleton",
+  "name": "generator-micro-service",
+  "version": "1.0.0",
+  "description": "A micro service scaffold",
   "homepage": "https://github.com/sunsetriders/generator-generic-service",
   "author": {
     "name": "Daitan Group",
@@ -20,7 +20,7 @@
     "generator-git-init": "^1.1.3",
     "random-word": "^1.0.2",
     "valid-url": "^1.0.9",
-    "yeoman-generator": "^0.23.0",
+    "yeoman-generator": "^1.1.0",
     "yosay": "^1.0.0"
   },
   "devDependencies": {
