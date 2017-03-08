@@ -6,40 +6,6 @@ You can find the objective of this project and dependencies in the [ARCHITECTURE
 
 > **Reminder:** [Making READMEs readable](https://pages.18f.gov/open-source-guide/making-readmes-readable/).
 
-## Folder Structure
-
-```
-.
-├── .github
-|   └── PULL_REQUEST_TEMPLATE.md
-├── bin
-├── config
-├── lib
-├── src
-|   ├── assets
-|   ├── models
-|   └── services
-└── tests
-```
-
-:sparkles: **.github**: This is our integration with github service, we highlight that we are going to provide a [Pull Request Template](https://help.github.com/articles/creating-a-pull-request-template-for-your-repository/).
-
-:information_source: **bin**: Find the wrappers to start the services we provide within this code here, `package.json` is going to have commands pointing to those files.
-
-:memo: **config**: Environment variables or `.env` file? This is the place to answer these type of questions.
-
-:point_right: **lib**: It's a design decision to write the modules we may export one day in this folder, so everything that you can re-utilize must be here.
-
-:heavy_check_mark: **src**: The app we write lives here. Explore the business logic and the algorithms to help us with them all here.
-
-:heavy_check_mark: **src/assets**: When we need resources that are not code, but the code needs them, like HTML files for emails templates, images, text files and so.
-
-:heavy_check_mark: **src/models**: Do you know when we need to have a module or a class to help us structuring our information, organizing inputs or outputs, so we welcome code responsible for this here.
-
-:heavy_check_mark: **src/services**: Our external dependencies will reside here, modules to use databases, APIs or any other stuff to get the job done.
-
-:ghost: **tests**: Unit tests, Functional tests or any other kind of test should be here. You know good software comes with some QA, right?
-
 ## How to run this application for development (locally)?
 
 ### System requirements
@@ -108,4 +74,62 @@ Environment Variable                                | Required                  
 
 ## How to develop and test new patches
 
-> Please, describe how to develop, install and test new patches for this project.
+This is a topic for developers willing to help us build a better micro service.
+
+### Folders Structure
+
+Let us introduce how we organize the folders structure first:
+
+```
+.
+├── .github
+|   └── PULL_REQUEST_TEMPLATE.md
+├── bin
+├── config
+├── lib
+├── src
+|   ├── assets
+|   ├── models
+|   └── services
+└── tests
+```
+
+:sparkles: **.github**: This is our integration with github service, we highlight that we are going to provide a [Pull Request Template](https://help.github.com/articles/creating-a-pull-request-template-for-your-repository/).
+
+:information_source: **bin**: Find the wrappers to start the services we provide within this code here, `package.json` is going to have commands pointing to those files.
+
+:memo: **config**: This folder contains javascript files that are responsible to read the `.env` file, constructing and exporting a module to our app, that can be used through `const configs = require('getconfig')` - a code snippet that is used a lot when requiring environment variables.
+
+:point_right: **lib**: It's a design decision to write the modules we may export one day in this folder, so everything that you can re-utilize must be here.
+
+:heavy_check_mark: **src**: The app we write lives here. Explore the business logic and the algorithms to help us with them all here.
+
+:heavy_check_mark: **src/assets**: When we need resources that are not javascript files, but the code needs them, like HTML files for emails templates, images, text files and so.
+
+:heavy_check_mark: **src/models**: Do you know when we need to have a module or a class to help us structuring our information, organizing inputs or outputs, so we welcome code responsible for this here.
+
+:heavy_check_mark: **src/services**: "Services" are those files that contain the business logic itself and may use some resources from `src/models`, `src/assets`, or even something from the `/lib` folder.
+
+:heavy_check_mark: **src/routes**: Contains the files that implement the controllers + API documentation ([Open API](https://www.openapis.org/)).
+
+A route path is generated using the folder tree itself, *example*:
+
+File `routes/nominations/{nominationId}.js` is going to implement a controler + API Docs for route `/nominations/{nominationId}`
+
+:ghost: **tests**: Unit tests, Functional tests or any other kind of test should be here. You know good software comes with some QA, right? We use [mocha](https://mochajs.org/) + [chai](http://chaijs.com/) to develop them.
+
+:ghost: **tests/functional**: Functional or Integration tests.
+
+:ghost: **tests/unit**: Unit tests.
+
+### Package.json commands
+
+We rely on [npm scripts session](https://docs.npmjs.com/misc/scripts) to provide them. Every test runs with [Istanbul](https://istanbul.js.org/) coverage tool.
+
+- `npm test`: call all the test commands we have to test this project;
+- `npm run test:lint`: only check the lint specs of our javascript;
+- `npm run test:unit`: run all unit tests;
+- `npm run test:unit:debug`: all unit tests with more verbosity;
+- `npm run test:functional`: run all functional/integration tests;
+- `npm run test:functional:debug`: all functional/integration tests with more verbosity;
+- `npm run docs`: generates the swagger.yaml file, that integrates with [Apiary.io](https://apiary.io/).
