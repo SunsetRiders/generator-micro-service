@@ -11,6 +11,30 @@ Try using an image to help people understand it. How to use images:
 
 3. Close the issue!!!
 
+## Objective
+
+Describe what is this service purpose, goal, objective.
+
+## Services Integrations
+
+Does it have dependencies, a database? Describe one by one!
+
+## Design
+
+Does it have  a specific software design, are you using design patterns?
+
+Do we have assumptions made to develop this software? Can you list them?
+
+### Docker-compose Services
+
+Which services this project must have in a container?
+
+## Application Program Interface
+
+Does it expose a RESTful API? Or other type of API? Please give a glimpse of it!
+
+Do you have an API documentation? Give the link to it!
+
 ## Non-functional Requirements
 
 Remember to describe non-functional requirements that this component can accept or must adhere.
@@ -20,4 +44,3 @@ Does it:
 - scale?
 - must support a certain number of users/requests? have a load limit?
 - have a protocol adherence?
-- have dependencies?
