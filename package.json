@@ -1,5 +1,5 @@
 {
-  "name": "generator-micro-service",
+  "name": "generator-generic-service",
   "version": "1.0.0",
   "description": "A micro service scaffold",
   "homepage": "https://github.com/sunsetriders/generator-generic-service",
@@ -20,7 +20,7 @@
     "generator-git-init": "^1.1.3",
     "random-animal-names": "^2.0.1",
     "valid-url": "^1.0.9",
-    "yeoman-generator": "^1.1.0",
+    "yeoman-generator": "^0.23.0",
     "yosay": "^1.0.0"
   },
   "devDependencies": {
