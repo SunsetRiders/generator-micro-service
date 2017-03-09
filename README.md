@@ -1,6 +1,6 @@
-# generator-generic-service
+# generator-micro-service
 
-> Micro service skeleton
+A micro service skeleton
 
 ## Installation
 
@@ -21,6 +21,7 @@ yo micro-service
 
 ## Getting To Know
 
+http://yeoman.io/
 
 ## License
 
