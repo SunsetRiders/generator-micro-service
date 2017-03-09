@@ -16,7 +16,7 @@ npm install -g https://github.com/sunsetriders/generator-generic-service
 Then generate your new project:
 
 ```bash
-yo generic-service
+yo micro-service
 ```
 
 ## Getting To Know

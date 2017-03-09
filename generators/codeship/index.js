@@ -1,16 +1,17 @@
-const generators = require('yeoman-generator');
+const Generator = require('yeoman-generator');
 
-module.exports = generators.Base.extend({
-  constructor: function(...parameters) {
-    generators.Base.apply(this, parameters);
+module.exports = class extends Generator {
+  constructor(args, opts) {
+    super(args, opts);
+
     this.option('nodeVersion');
-  },
+  }
 
-  initializing: function() {
+  initializing() {
     this.props = {};
-  },
+  }
 
-  copyConfigurationFiles: function() {
+  copyConfigurationFiles() {
     [
       'codeship-services.yml',
       'codeship-steps.yml',
@@ -22,5 +23,5 @@ module.exports = generators.Base.extend({
         this.options
       );
     });
-  },
-});
+  }
+};
