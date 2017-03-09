@@ -1,6 +1,5 @@
 const chalk      = require('chalk');
-const extend     = require('deep-extend');
-const generators = require('yeoman-generator');
+const Generator = require('yeoman-generator');
 const mkdirp     = require('mkdirp');
 const path       = require('path');
 
@@ -9,12 +8,17 @@ const validateServiceName = require('./lib/validate-service-name');
 const formatProjectTags   = require('./lib/format-tags');
 const nodeVersionList     = require('./node-versions');
 
-module.exports = generators.Base.extend({
-  initializing: function() {
-    this.props = {};
-  },
+module.exports = class extends Generator {
+  constructor(args, opts) {
+    super(args, opts);
+  }
 
-  prompting: function() {
+  initializing() {
+    this.props = {};
+  }
+
+  prompting() {
+    let _this = this;
     return this.prompt([
       {
         name: 'userviceName',
@@ -42,11 +46,11 @@ module.exports = generators.Base.extend({
         filter: formatProjectTags,
       },
     ]).then(function(props) {
-      this.props = props;
-    }.bind(this));
-  },
+      _this.props = props;
+    });
+  }
 
-  createServiceDir: function() {
+  createServiceDir() {
     if (path.basename(this.destinationPath()) !== this.props.userviceName) {
       this.log(
         'Your generator must be inside a folder named ' +
@@ -56,13 +60,12 @@ module.exports = generators.Base.extend({
       mkdirp(this.props.userviceName);
       this.destinationRoot(this.destinationPath(this.props.userviceName));
     }
-  },
+  }
 
-  projectFiles: function() {
+  projectFiles() {
     [
       'Dockerfile',
       'docker-compose.yml',
-      'package.json',
       'README.md',
       'ARCHITECTURE.md',
     ].forEach((file) => {
@@ -72,9 +75,9 @@ module.exports = generators.Base.extend({
         this.props
       );
     });
-  },
+  }
 
-  dotFiles: function() {
+  dotFiles() {
     [
       ['_dockerignore', '.dockerignore'],
       ['_env.example', '.env.example'],
@@ -89,9 +92,9 @@ module.exports = generators.Base.extend({
         this.props
       );
     });
-  },
+  }
 
-  binFolder: function() {
+  binFolder() {
     [
       'bin/api.js',
       'bin/docs.js',
@@ -102,9 +105,9 @@ module.exports = generators.Base.extend({
         this.props
       );
     });
-  },
+  }
 
-  testsFolder: function() {
+  testsFolder() {
     [
       'tests/mocha.opts',
       'tests/contract/api-test.js',
@@ -116,9 +119,9 @@ module.exports = generators.Base.extend({
         this.props
       );
     });
-  },
+  }
 
-  configFolder: function() {
+  configFolder() {
     [
       'config/local.js',
     ].forEach((file) => {
@@ -128,9 +131,9 @@ module.exports = generators.Base.extend({
         this.props
       );
     });
-  },
+  }
 
-  libFolder: function() {
+  libFolder() {
     [
       'lib/api-key-security.js',
       'lib/app.js',
@@ -151,9 +154,9 @@ module.exports = generators.Base.extend({
         this.props
       );
     });
-  },
+  }
 
-  srcFolder: function() {
+  srcFolder() {
     [
       'src/service.js',
       'src/doc.json',
@@ -164,9 +167,9 @@ module.exports = generators.Base.extend({
         this.props
       );
     });
-  },
+  }
 
-  srcRoutesFolder: function() {
+  srcRoutesFolder() {
     [
       'src/routes/api-docs.js',
     ].forEach((file) => {
@@ -176,49 +179,15 @@ module.exports = generators.Base.extend({
         this.props
       );
     });
-  },
+  }
 
-
-  extendingPackageJSON: function() {
-    const pkg = this.fs.readJSON(this.destinationPath('package.json'), {});
-    extend(pkg, {
-      dependencies: {
-        // Add production dependencies
-      },
-      devDependencies: {
-        // Add development dependencies
-      },
-    });
-    pkg.keywords = (pkg.keywords || []).concat(this.props.projectTags);
-
-    this.fs.writeJSON(this.destinationPath('package.json'), pkg);
-  },
-
-  install: function() {
-    this.composeWith('git-init', {
-      options: {commit: '[init]' + this.props.userviceName + ' barebones - created.'},
-    }, {
-      local: require.resolve('generator-git-init'),
-    });
-    this.composeWith(
-      'generic-service:cloud66',
-      {
-        options: {
-          repoUrl: this.props.gitURI,
-          serviceName: this.props.userviceName,
-        },
-      },
-      {}
-    );
-    this.composeWith(
-      'generic-service:codeship',
-      {
-        options: {
-          nodeVersion: this.props.nodeVersion,
-        },
-      },
-      {}
-    );
+  install() {
     this.installDependencies({bower: false});
-  },
-});
+  }
+
+  // end() {
+  //   this.composeWith(
+  //     'generic-service:repo'
+  //   );
+  // }
+};

@@ -6,8 +6,8 @@
  * @return {bool} valid?
  */
 function validateGitUri(uri) {
-  return str.indexOf('git') === 0 ||
-    str.indexOf('http') === 0;
+  return uri.indexOf('git') === 0 ||
+    uri.indexOf('http') === 0;
 }
 
 module.exports = validateGitUri;

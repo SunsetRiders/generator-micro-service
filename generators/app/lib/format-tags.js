@@ -6,7 +6,7 @@
  * @return {string[]} formated tags
  */
 function formatTags(tagsString) {
-  tagStr = str || '';
+  tagStr = tagsString || '';
   return tagStr.split(',').map((tag) => tag.replace(/\s/g, '-'));
 }
 

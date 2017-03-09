@@ -1,6 +1,6 @@
 const _          = require('lodash');
 const chalk      = require('chalk');
-const generators = require('yeoman-generator');
+const Generator = require('yeoman-generator');
 const mkdirp     = require('mkdirp');
 const randomWord = require('random-animal-names');
 
@@ -141,18 +141,20 @@ const vendorsQuestions = {
 };
 
 
-module.exports = generators.Base.extend({
-  constructor: function(...parameters) {
-    generators.Base.apply(this, parameters);
+module.exports = class extends Generator {
+
+  constructor(args, opts) {
+    super(args, opts);
+
     this.option('repoUrl');
     this.option('serviceName');
-  },
+  }
 
-  initializing: function() {
+  initializing() {
     this.props = {};
-  },
+  }
 
-  prompting: function() {
+  prompting() {
     return this.prompt([
       {
         name: 'c66OrganizationName',
@@ -182,9 +184,9 @@ module.exports = generators.Base.extend({
       });
       return props.c66Environments;
     }.bind(this)).then(this._setupEnvironments.bind(this));
-  },
+  }
 
-  _setupEnvironments: function(environments) {
+  _setupEnvironments(environments) {
     const [currentEnv, ...remainingEnvs] = environments;
     if (currentEnv) {
       this.log(chalk.bold('Configuration for environment: ' + currentEnv));
@@ -198,9 +200,9 @@ module.exports = generators.Base.extend({
         return this._setupEnvironments(remainingEnvs);
       });
     }
-  },
+  }
 
-  write: function() {
+  write() {
     mkdirp('.cloud66');
     const oldDestinationRoot = this.destinationRoot();
     this.destinationRoot(this.destinationPath('.cloud66'));
@@ -219,9 +221,9 @@ module.exports = generators.Base.extend({
       );
     });
     this.destinationRoot(oldDestinationRoot);
-  },
+  }
 
-  cloud66Scripts: function() {
+  cloud66Scripts() {
     const scripts = this.props.c66Environments
       .reduce((scripts, env) => {
         const org          = `--org "${this.props.c66OrganizationName}"`;
@@ -239,5 +241,5 @@ module.exports = generators.Base.extend({
       }, {});
 
     this.fs.extendJSON(this.destinationPath('package.json'), {scripts: scripts});
-  },
-});
+  }
+};
