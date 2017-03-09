@@ -6,7 +6,6 @@ const path       = require('path');
 
 const formatServiceName   = require('./lib/format-service-name');
 const validateServiceName = require('./lib/validate-service-name');
-const validateGitUri      = require('./lib/validate-git-uri');
 const formatProjectTags   = require('./lib/format-tags');
 const nodeVersionList     = require('./node-versions');
 
@@ -24,12 +23,6 @@ module.exports = generators.Base.extend({
         default: formatServiceName(path.basename(process.cwd())),
         filter: formatServiceName,
         validate: validateServiceName,
-      }, {
-        name: 'gitURI',
-        type: 'input',
-        message: 'git URI:',
-        default: 'https://github.com/',
-        validate: validateGitUri,
       }, {
         name: 'nodeVersion',
         type: 'list',
@@ -71,6 +64,7 @@ module.exports = generators.Base.extend({
       'docker-compose.yml',
       'package.json',
       'README.md',
+      'ARCHITECTURE.md',
     ].forEach((file) => {
       this.fs.copyTpl(
         this.templatePath(file),

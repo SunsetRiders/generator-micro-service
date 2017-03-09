@@ -56,7 +56,7 @@ const commonQuestions = [
     name: 'c66ServerName',
     type: 'input',
     message: 'Cloud66 - Server name:',
-    default: () => _.kebabCase(randomWord.random())
+    default: () => _.kebabCase(randomWord.random()),
   },
 ];
 
