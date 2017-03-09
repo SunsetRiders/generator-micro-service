@@ -112,6 +112,7 @@ module.exports = class extends Generator {
    *  Add the chosen tags to package.json tags session
    */
   extendingPackageJSON() {
+    this.log('Adding chosen tags in package.json - session "keywords"');
     const pkg = this.fs.readJSON(this.destinationPath('package.json'), {});
     extend(pkg, {
       dependencies: {
@@ -266,7 +267,6 @@ module.exports = class extends Generator {
   }
 
   end() {
-    this._extendingPackageJSON();
     this.installDependencies({bower: false});
   }
 };
