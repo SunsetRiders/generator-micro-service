@@ -1,37 +1,14 @@
-const _          = require('lodash');
 const chalk      = require('chalk');
 const extend     = require('deep-extend');
 const generators = require('yeoman-generator');
 const mkdirp     = require('mkdirp');
 const path       = require('path');
 
-const makeGeneratorName = function(name) {
-  kebabedName = _.kebabCase(name);
-  serviceStr = '-service';
-  if (kebabedName.indexOf('service') >= 0) {
-    return kebabedName;
-  }
-  return kebabedName+ '-service';
-};
-
-const validateServiceName = function(str) {
-  return (str.length > '-service'.length) &&
-    (str.indexOf('service') >= 0);
-};
-
-const validateGithubUri = function(str) {
-  return str.indexOf('git') === 0 && (str.indexOf('github') >= 0);
-};
-
-const formatProjectTags = function(str) {
-  tagStr = str || '';
-  return tagStr.split(',').map((tag) => tag.replace(/\s/g, ''));
-};
-
-const nodeVersionList = [
-  '6.4',
-  '7.1',
-];
+const formatServiceName   = require('./lib/format-service-name');
+const validateServiceName = require('./lib/validate-service-name');
+const validateGitUri      = require('./lib/validate-git-uri');
+const formatProjectTags   = require('./lib/format-tags');
+const nodeVersionList     = require('./node-versions');
 
 module.exports = generators.Base.extend({
   initializing: function() {
@@ -44,15 +21,15 @@ module.exports = generators.Base.extend({
         name: 'userviceName',
         type: 'input',
         message: 'Micro-service name:',
-        default: makeGeneratorName(path.basename(process.cwd())),
-        filter: makeGeneratorName,
+        default: formatServiceName(path.basename(process.cwd())),
+        filter: formatServiceName,
         validate: validateServiceName,
       }, {
-        name: 'githubURI',
+        name: 'gitURI',
         type: 'input',
-        message: 'Github URI:',
-        default: 'https://github.com/sunsetriders/service',
-        validate: validateGithubUri,
+        message: 'git URI:',
+        default: 'https://github.com/',
+        validate: validateGitUri,
       }, {
         name: 'nodeVersion',
         type: 'list',
@@ -233,7 +210,7 @@ module.exports = generators.Base.extend({
       'generic-service:cloud66',
       {
         options: {
-          repoUrl: this.props.githubURI,
+          repoUrl: this.props.gitURI,
           serviceName: this.props.userviceName,
         },
       },
