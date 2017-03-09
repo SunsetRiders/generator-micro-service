@@ -2,9 +2,11 @@ const chalk      = require('chalk');
 const Generator = require('yeoman-generator');
 const mkdirp     = require('mkdirp');
 const path       = require('path');
+const extend     = require('deep-extend');
 
 const formatServiceName   = require('./lib/format-service-name');
 const validateServiceName = require('./lib/validate-service-name');
+const validateGitUri = require('./lib/validate-git-uri');
 const formatProjectTags   = require('./lib/format-tags');
 const nodeVersionList     = require('./node-versions');
 
@@ -28,16 +30,16 @@ module.exports = class extends Generator {
         filter: formatServiceName,
         validate: validateServiceName,
       }, {
+        name: 'projectDescription',
+        type: 'input',
+        message: 'This project description:',
+        default: '',
+      }, {
         name: 'nodeVersion',
         type: 'list',
         message: 'Node Version: ',
         default: 0,
         choices: nodeVersionList,
-      }, {
-        name: 'projectDescription',
-        type: 'input',
-        message: 'This project description:',
-        default: '',
       }, {
         name: 'projectTags',
         type: 'input',
@@ -45,7 +47,35 @@ module.exports = class extends Generator {
         default: 'service',
         filter: formatProjectTags,
       },
+      {
+        name: 'github',
+        type: 'confirm',
+        message: 'Should we start a Github repository?',
+      },
+      {
+        when: function(response) {
+          return response.github;
+        },
+        name: 'gitURI',
+        type: 'input',
+        message: 'Github URI:',
+        default: 'https://github.com/',
+        validate: validateGitUri,
+      },
+      {
+        name: 'cloud66',
+        type: 'confirm',
+        message: 'Should we start Cloud66 stacks?',
+      },
+      {
+        name: 'Codeship',
+        type: 'confirm',
+        message: 'Should we start a Codeship project?',
+      },
     ]).then(function(props) {
+      if (!props.github) {
+        props.gitURI = '';
+      }
       _this.props = props;
     });
   }
@@ -68,6 +98,7 @@ module.exports = class extends Generator {
       'docker-compose.yml',
       'README.md',
       'ARCHITECTURE.md',
+      'package.json',
     ].forEach((file) => {
       this.fs.copyTpl(
         this.templatePath(file),
@@ -75,6 +106,24 @@ module.exports = class extends Generator {
         this.props
       );
     });
+  }
+
+  /**
+   *  Add the chosen tags to package.json tags session
+   */
+  extendingPackageJSON() {
+    const pkg = this.fs.readJSON(this.destinationPath('package.json'), {});
+    extend(pkg, {
+      dependencies: {
+        // Add production dependencies
+      },
+      devDependencies: {
+        // Add development dependencies
+      },
+    });
+    pkg.keywords = (pkg.keywords || []).concat(this.props.projectTags);
+
+    this.fs.writeJSON(this.destinationPath('package.json'), pkg);
   }
 
   dotFiles() {
@@ -182,12 +231,42 @@ module.exports = class extends Generator {
   }
 
   install() {
-    this.installDependencies({bower: false});
+    if (this.options.github) {
+      this.composeWith('git-init', {
+        options: {commit: 'Initial commit: ' + this.props.userviceName + ' barebones created.'},
+      }, {
+        local: require.resolve('generator-git-init'),
+      });
+      if (this.options.cloud66) {
+        this.composeWith(
+          'micro-service:cloud66',
+          {
+            options: {
+              repoUrl: this.props.gitURI,
+              serviceName: this.props.userviceName,
+            },
+          }
+        );
+      }
+      if (this.options.codeship) {
+        this.composeWith(
+          'micro-service:codeship',
+          {
+            options: {
+              nodeVersion: this.props.nodeVersion,
+            },
+          }
+        );
+      }
+    }
+    this.log('\n' +
+      chalk.underline.bold('Without a github repository it is not possible to start Cloud66 and Codeship.') +
+      '\nending...'
+    );
   }
 
-  // end() {
-  //   this.composeWith(
-  //     'generic-service:repo'
-  //   );
-  // }
+  end() {
+    this._extendingPackageJSON();
+    this.installDependencies({bower: false});
+  }
 };
