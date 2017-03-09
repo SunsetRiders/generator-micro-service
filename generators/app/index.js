@@ -1,12 +1,12 @@
-const chalk      = require('chalk');
+const chalk     = require('chalk');
 const Generator = require('yeoman-generator');
-const mkdirp     = require('mkdirp');
-const path       = require('path');
-const extend     = require('deep-extend');
+const mkdirp    = require('mkdirp');
+const path      = require('path');
+const extend    = require('deep-extend');
 
 const formatServiceName   = require('./lib/format-service-name');
 const validateServiceName = require('./lib/validate-service-name');
-const validateGitUri = require('./lib/validate-git-uri');
+const validateGitUri      = require('./lib/validate-git-uri');
 const formatProjectTags   = require('./lib/format-tags');
 const nodeVersionList     = require('./node-versions');
 
