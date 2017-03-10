@@ -74,7 +74,7 @@ Environment Variable                                | Required                  
 
 ## How to develop and test new patches
 
-This is a topic for developers willing to help us build a better micro service.
+This is a topic for developers willing to help us build a better micro service. Reading below will cover how to approach this project and how to develop a new route for this micro service.
 
 ### Folders Structure
 
@@ -122,9 +122,9 @@ File `routes/nominations/{nominationId}.js` is going to implement a controler + 
 
 :ghost: **tests/unit**: Unit tests.
 
-### Package.json commands
+### Package.json scripts
 
-We rely on [npm scripts session](https://docs.npmjs.com/misc/scripts) to provide them. Every test runs with [Istanbul](https://istanbul.js.org/) coverage tool.
+We rely on [npm scripts session](https://docs.npmjs.com/misc/scripts) to provide them. Every test ca run with [Istanbul](https://istanbul.js.org/) coverage tool.
 
 - `npm test`: call all the test commands we have to test this project;
 - `npm run test:lint`: only check the lint specs of our javascript;
@@ -133,3 +133,60 @@ We rely on [npm scripts session](https://docs.npmjs.com/misc/scripts) to provide
 - `npm run test:functional`: run all functional/integration tests;
 - `npm run test:functional:debug`: all functional/integration tests with more verbosity;
 - `npm run docs`: generates the swagger.yaml file, that integrates with [Apiary.io](https://apiary.io/).
+
+### Branches purposes (Gitflow)
+
+  - **develop**: used for development. We don't expect this environment to be always working nor up and running, since this is
+the right place to check how the code is going to perform in a *production like* environment. Start new features here!
+
+  - **release**: used to test new features, bug or incident fixes. We expect this environment to be always up and running, without trace of features partially developed - this environment must be stable! We are going to use the code here to be moved to PRODUCTION, so breaking this environment must bring the same feeling as breaking production.
+
+  - **master**: this is where our current stable software must reside. Moving code here must follow [SEMANTIC VERSIONING v2.0.0](http://semver.org/) with a commented git tag.
+
+It is also your responsability to check if our Countinuous Integration is working properly to deliver your patch.
+
+### Code delivery
+
+We would like to give an overview of how to deliver a patch to this project, by describing how a new route (or endpoint), should be written.
+
+Let's take the `/health` route as the code sample of this example.
+
+1. create your separated branch for this one:
+
+```shell-script
+git checkout develop
+git pull origin develop
+git branch -b feature/new_route
+```
+
+2. ensure you have everything OK to run this project entirely in your local machine, start any dependencies with the provided `docker-compose.yml`. If you are going to start a new dependency, `docker-compose.yml` is the file you also need to prepare with this dependency - we are keeping how to use `docker-compose` commands out of this scope. Then get all the node modules this project need:
+
+```shell-script
+npm install
+```
+
+Note that if you need a new node module we suggest you to install it via `npm install <module_name> --save`, if you are not comfortable with `npm`, try reading [npm documentation for installing new dependencies](https://docs.npmjs.com/cli/install).
+
+3. For exposing your new route lies the tricky part to understand it: the route is a file path under `src/routes/`. Therefore to expose `/health` we need to create the file `src/routes/health.js`. We also have a version of the micro service API prepended in the route, to find out how it works you can check how we use the environment variable `API_VERSION`.
+
+4. Work on `src/routes/health.js`: this is where you give life to your endpoint and also to the documentation. With regards to *documentation*, if you need new [Open API](https://www.openapis.org/) definitions, write it in `src/doc.json` and use it in the route file. If you need to deal with an information that is nice to be structured, you may need to write or update a module in `src/models`. If you need to use files like .sql - for database queries - or html templates, or even image files, save them in `src/assets`. If you need to connect to a database, or any external dependency, `src/services` is where you create the javascript to define a solution to this dependency.
+
+If you need anything that is a repetitive task when receiving a request in your route, think about using a [ExpressJS middleware](https://expressjs.com/en/guide/using-middleware.html).
+
+5. *Organization of features inside the code*: we are grouping the features we develop in `src/services` files, so pay attention to keep this kind of organization in your development. Also keep attention to folders structures that may arise inside the main folders of this project - always discuss what is better with the team.
+
+6. Give it an automated test: We encourage every developer to write unit and functional tests, so `tests` folder is where you should find sample codes for it!
+
+7. Ensure you have every other part of the micro service running as expected by the written tests with:
+
+```shell-script
+npm test
+```
+
+Check if your environment variables are pointing to the best place to test your new feature with the tests.
+
+8. Now you must be confident to push your code and open a Pull Request to our *develop branch*.
+
+If you have questions, always count on discussing with your teammates!
+
+Happy coding! :-)
