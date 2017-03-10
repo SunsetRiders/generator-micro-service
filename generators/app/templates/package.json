@@ -24,8 +24,8 @@
     "test:lint": "eslint . --quiet",
     "test:unit": "LOGS_TRANSPORTS=file istanbul cover --include-all-sources -x 'bin/*' _mocha -- tests/unit --opts ./tests/mocha.opts && mv -f coverage/coverage.json coverage/unit.json",
     "test:unit:debug": "GETCONFIG_ROOT=config/ istanbul cover --include-all-sources -x 'bin/*' -x 'src/routes/**/**/*' _mocha -- tests/unit --opts ./tests/mocha-debug.opts",
-    "test:functional": "LOGS_TRANSPORTS=file istanbul cover --include-all-sources -x 'bin/*' _mocha -- tests/contract --opts ./tests/mocha.opts && mv -f coverage/coverage.json coverage/functional.json",
-    "test:functional:debug": "GETCONFIG_ROOT=config/ istanbul cover --include-all-sources -x 'bin/*' _mocha -- tests/contract --opts ./tests/mocha-debug.opts",
+    "test:functional": "LOGS_TRANSPORTS=file istanbul cover --include-all-sources -x 'bin/*' _mocha -- tests/functional/functional-framework.js --opts ./tests/mocha.opts && mv -f coverage/coverage.json coverage/functional.json",
+    "test:functional:debug": "GETCONFIG_ROOT=config/ istanbul cover --include-all-sources -x 'bin/*' _mocha -- tests/functional/functional-framework.js --opts ./tests/mocha-debug.opts",
     "test:merge": "istanbul-combine -d coverage/lcov-report -p both -r lcov -r html coverage/unit.json coverage/functional.json"
   },
   "devDependencies": {
