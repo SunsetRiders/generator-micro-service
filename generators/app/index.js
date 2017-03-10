@@ -153,7 +153,7 @@ module.exports = class extends Generator {
   testsFolder() {
     importTemplateFilesDefault(this)([
       'tests/mocha.opts',
-      'tests/contract/api-test.js',
+      'tests/functional/api-test.js',
       'tests/unit/config-test.js',
     ])
   }
