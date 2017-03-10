@@ -15,7 +15,7 @@ module.exports = class extends Generator {
 
   write() {
     [
-      'src/services/rethinkdb.js',
+      'lib/rethinkdb.js',
       'config/rethinkdb.js',
     ].forEach((file) => {
       this.fs.copyTpl(
