@@ -39,56 +39,37 @@
           "message"
         ]
       },
-      "Users": {
+      "Errors": {
         "type": "object",
         "properties": {
-          "firstName": {
-            "type": "string"
-          },
-          "lastName": {
-            "type": "string"
-          },
-          "username": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "userPrincipalName": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/ErrorItem"
+            }
           }
-        },
-        "required": [
-          "firstName",
-          "lastName",
-          "username",
-          "email",
-          "userPrincipalName"
-        ]
+        }
       }
     },
     "parameters": {
-      "PaginationPageParam": {
+      "PageParam": {
         "name": "page",
         "in": "query",
-        "description": "Pagination page, default is 1.",
+        "description": "The page number to return.",
         "required": false,
-        "type": "number"
+        "type": "integer"
       },
-      "PaginationLimitParam": {
+      "LimitParam": {
         "name": "limit",
         "in": "query",
-        "description": "Pagination limit, default is 100",
+        "description": "The number of items per page.",
         "required": false,
-        "type": "number"
+        "type": "integer"
       },
       "SearchParam": {
         "name": "q",
         "in": "query",
-        "description": "Search terms",
+        "description": "Search terms.",
         "required": false,
         "type": "string"
       },
@@ -101,106 +82,16 @@
       }
     },
     "responses": {
-      "ListUsersResponse": {
-        "description": "Successful response from Service listing its users",
-        "schema": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Users"
-          }
-        }
-      },
-      "SuccessResponse": {
-        "description": "Operation was successful",
-        "examples": {
-          "application/json": ""
-        }
+      "Ok": {
+        "description": "Request to API was successful."
       },
       "Created": {
         "description": "Request to provision was successful."
       },
-      "Unauthorized": {
-        "description": "Unauthorized. Invalid authorization token",
-        "schema": {
-          "type": "object",
-          "properties": {
-            "errors": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/ErrorItem"
-              }
-            }
-          }
-        },
-        "examples": {
-          "application/json": {
-            "errors": [
-              {
-                "message": "Header with invalid token",
-                "field": "token"
-              }
-            ]
-          }
-        }
-      },
-      "Conflict": {
-        "description": "Conflict. The request could not be completed due to a conflict with the current state of the target resource.",
-        "schema": {
-          "type": "object",
-          "properties": {
-            "errors": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/ErrorItem"
-              }
-            }
-          }
-        },
-        "examples": {
-          "application/json": {
-            "errors": [
-              {
-                "message": "User already provisioned"
-              }
-            ]
-          }
-        }
-      },
-      "InternalServerError": {
-        "description": "Internal Server Error. An unexpected condition prevented the service from fulfilling the request.",
-        "schema": {
-          "type": "object",
-          "properties": {
-            "errors": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/ErrorItem"
-              }
-            }
-          }
-        },
-        "examples": {
-          "application/json": {
-            "errors": [
-              {
-                "message": "Service API is offline"
-              }
-            ]
-          }
-        }
-      },
       "BadRequest": {
         "description": "Bad Request. Validation failed for input body parameters.",
         "schema": {
-          "type": "object",
-          "properties": {
-            "errors": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/ErrorItem"
-              }
-            }
-          }
+          "$ref": "#/definitions/Errors"
         },
         "examples": {
           "application/json": {
@@ -213,24 +104,62 @@
           }
         }
       },
-      "NotFound": {
-        "description": "Not Found. The server has not found anything matching the identifier.",
+      "Unauthorized": {
+        "description": "Unauthorized. Invalid authorization token",
         "schema": {
-          "type": "object",
-          "properties": {
-            "errors": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/ErrorItem"
-              }
-            }
-          }
+          "$ref": "#/definitions/Errors"
         },
         "examples": {
           "application/json": {
             "errors": [
               {
-                "message": "Not Found"
+                "message": "Header with invalid token",
+                "field": "token"
+              }
+            ]
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Forbidden. You have no authorization to do it.",
+        "schema": {
+          "$ref": "#/definitions/Errors"
+        },
+        "examples": {
+          "application/json": {
+            "errors": [
+              { "message": "You must be root to do it" },
+              { "message": "Your current password is wrong"},
+              { "message": "And so on"}
+            ]
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Not Found. The server has not found anything matching the identifier.",
+        "schema": {
+          "$ref": "#/definitions/Errors"
+        },
+        "examples": {
+          "application/json": {
+            "errors": [
+              { "message": "User not found" },
+              { "message": "CRM not found"},
+              { "message": "And so on"}
+            ]
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "Internal Server Error.",
+        "schema": {
+          "$ref": "#/definitions/Errors"
+        },
+        "examples": {
+          "application/json": {
+            "errors": [
+              {
+                "message": "Service API is offline"
               }
             ]
           }
