@@ -7,7 +7,7 @@
  */
 function formatTags(tagsString) {
   tagStr = tagsString || '';
-  return tagStr.split(',').map((tag) => tag.replace(/\s/g, '-'));
+  return tagStr.split(',').map((tag) => tag.replace(/\s/g, ''));
 }
 
 module.exports = formatTags;

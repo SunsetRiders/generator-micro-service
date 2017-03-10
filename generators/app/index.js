@@ -6,13 +6,28 @@ const extend    = require('deep-extend');
 
 const formatProjectTags   = require('./lib/format-tags');
 const formatServiceName   = require('./lib/format-service-name');
-const importTemplateFiles = require('./lib/import-template-files');
+const importTemplateFiles = require('../lib/import-template-files');
 const nodeVersionList     = require('./node-versions');
 const validateGitUri      = require('./lib/validate-git-uri');
 const validateServiceName = require('./lib/validate-service-name');
 
-const importTemplateFilesDefault  = importTemplateFiles(filename => filename)(filename => filename)
-const importTemplateFilesDotfiles = importTemplateFiles(filenames => filenames[0])(filenames => filenames[1])
+const importTemplateFilesDefault  = importTemplateFiles((filename) => filename)((filename) => filename);
+const importTemplateFilesDotfiles = importTemplateFiles((filenames) => filenames[0])((filenames) => filenames[1]);
+
+const choicesDatabases = [
+  {
+    name: 'Postgres',
+    checked: false
+  },
+  {
+    name: 'Redis',
+    checked: false
+  },
+  {
+    name: 'RethinkDB',
+    checked: false
+  }
+];
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -32,29 +47,35 @@ module.exports = class extends Generator {
         message: 'Micro-service name:',
         default: formatServiceName(path.basename(process.cwd())),
         filter: formatServiceName,
-        validate: validateServiceName,
+        validate: validateServiceName
       }, {
         name: 'projectDescription',
         type: 'input',
         message: 'This project description:',
-        default: '',
+        default: ''
       }, {
         name: 'nodeVersion',
         type: 'list',
         message: 'Node Version: ',
         default: 0,
-        choices: nodeVersionList,
+        choices: nodeVersionList
       }, {
         name: 'projectTags',
         type: 'input',
         message: 'This project tags:',
         default: 'service',
-        filter: formatProjectTags,
+        filter: formatProjectTags
+      },
+      {
+        name: 'databases',
+        type: 'checkbox',
+        message: 'Which databases are going to be used?',
+        choices: choicesDatabases
       },
       {
         name: 'github',
         type: 'confirm',
-        message: 'Should we start a Github repository?',
+        message: 'Should we start a Github repository?'
       },
       {
         when: function(response) {
@@ -64,18 +85,18 @@ module.exports = class extends Generator {
         type: 'input',
         message: 'Github URI:',
         default: 'https://github.com/',
-        validate: validateGitUri,
+        validate: validateGitUri
       },
       {
         name: 'cloud66',
         type: 'confirm',
-        message: 'Should we start Cloud66 stacks?',
+        message: 'Should we start Cloud66 stacks?'
       },
       {
         name: 'Codeship',
         type: 'confirm',
-        message: 'Should we start a Codeship project?',
-      },
+        message: 'Should we start a Codeship project?'
+      }
     ]).then(function(props) {
       if (!props.github) {
         props.gitURI = '';
@@ -100,14 +121,14 @@ module.exports = class extends Generator {
     importTemplateFilesDefault(this)([
       'README.md',
       'ARCHITECTURE.md',
-      'package.json',
-    ])
+      'package.json'
+    ]);
   }
 
   dockerFiles() {
     importTemplateFilesDefault(this)([
       'Dockerfile',
-      'docker-compose.yml',
+      'docker-compose.yml'
     ]);
     importTemplateFilesDotfiles(this)([
       ['_dockerignore', '.dockerignore']
@@ -126,7 +147,7 @@ module.exports = class extends Generator {
       },
       devDependencies: {
         // Add development dependencies
-      },
+      }
     });
     pkg.keywords = (pkg.keywords || []).concat(this.props.projectTags);
 
@@ -139,29 +160,29 @@ module.exports = class extends Generator {
       ['_eslintignore', '.eslintignore'],
       ['_eslintrc.js', '.eslintrc.js'],
       ['_gitignore', '.gitignore'],
-      ['_github/PULL_REQUEST_TEMPLATE.md', '.github/PULL_REQUEST_TEMPLATE.md'],
-    ])
+      ['_github/PULL_REQUEST_TEMPLATE.md', '.github/PULL_REQUEST_TEMPLATE.md']
+    ]);
   }
 
   binFolder() {
     importTemplateFilesDefault(this)([
       'bin/api.js',
-      'bin/docs.js',
-    ])
+      'bin/docs.js'
+    ]);
   }
 
   testsFolder() {
     importTemplateFilesDefault(this)([
       'tests/mocha.opts',
       'tests/functional/api-test.js',
-      'tests/unit/config-test.js',
-    ])
+      'tests/unit/config-test.js'
+    ]);
   }
 
   configFolder() {
     importTemplateFilesDefault(this)([
-      'config/local.js',
-    ])
+      'config/local.js'
+    ]);
   }
 
   libFolder() {
@@ -177,51 +198,87 @@ module.exports = class extends Generator {
       'lib/logger-request.js',
       'lib/logger-transports.js',
       'lib/logger.js',
-      'lib/openapi-generator.js',
-    ])
+      'lib/openapi-generator.js'
+    ]);
   }
 
   srcFolder() {
     importTemplateFilesDefault(this)([
-      'src/services/template-service.js',
-      'src/doc.json',
-    ])
+      'src/doc.json'
+    ]);
+  }
+
+  srcServicesFolder() {
+    importTemplateFilesDefault(this)([
+      'src/services/template-service.js'
+    ]);
   }
 
   srcRoutesFolder() {
     importTemplateFilesDefault(this)([
-      'src/routes/api-docs.js',
-    ])
+      'src/routes/api-docs.js'
+    ]);
   }
 
   install() {
-    if (this.options.github) {
-      this.composeWith('git-init', {
-        options: {commit: 'Initial commit: ' + this.props.userviceName + ' barebones created.'},
-      }, {
-        local: require.resolve('generator-git-init'),
+    const _this = this;
+    if (this.props.databases.length) {
+      this.props.databases.forEach(function(database) {
+        switch(database) {
+          case 'Postgres':
+            _this.composeWith(
+              'micro-service:postgres',
+              {}
+            );
+            break;
+          case 'Redis':
+            _this.composeWith(
+              'micro-service:redis',
+              {}
+            );
+            break;
+          case 'RethinkDB':
+            _this.composeWith(
+              'micro-service:rethinkdb',
+              {}
+            );
+            break;
+          default:
+            _this.log('\n' + chalk.bgRed(database + ' is not an option for databases! Doing nothing with it.'));
+        }
       });
-      if (this.options.cloud66) {
+    }
+    if (this.props.github) {
+      this.composeWith('git-init', {
+        options: {commit: 'Initial commit: ' + this.props.userviceName + ' barebones created.'}
+      }, {
+        local: require.resolve('generator-git-init')
+      });
+      if (this.props.cloud66) {
         this.composeWith(
           'micro-service:cloud66',
           {
             options: {
               repoUrl: this.props.gitURI,
-              serviceName: this.props.userviceName,
-            },
+              serviceName: this.props.userviceName
+            }
           }
         );
       }
-      if (this.options.codeship) {
+      if (this.props.codeship) {
         this.composeWith(
           'micro-service:codeship',
           {
             options: {
-              nodeVersion: this.props.nodeVersion,
-            },
+              nodeVersion: this.props.nodeVersion
+            }
           }
         );
       }
+    }
+    // giving latest warnings in the console
+    if (!this.props.databases.length) {
+      this.log('\n' + chalk.bold('No databases to set and configure.'));
     }
     this.log('\n' +
       chalk.underline.bold('Without a github repository it is not possible to start Cloud66 and Codeship.') +
