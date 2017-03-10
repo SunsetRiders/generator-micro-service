@@ -1,58 +1,39 @@
-const _          = require('lodash');
-const chalk      = require('chalk');
-const extend     = require('deep-extend');
-const generators = require('yeoman-generator');
-const mkdirp     = require('mkdirp');
-const path       = require('path');
+const chalk     = require('chalk');
+const Generator = require('yeoman-generator');
+const mkdirp    = require('mkdirp');
+const path      = require('path');
+const extend    = require('deep-extend');
 
-const makeGeneratorName = function(name) {
-  kebabedName = _.kebabCase(name);
-  serviceStr = '-service';
-  if (kebabedName.indexOf('service') >= 0) {
-    return kebabedName;
+const formatServiceName   = require('./lib/format-service-name');
+const validateServiceName = require('./lib/validate-service-name');
+const validateGitUri      = require('./lib/validate-git-uri');
+const formatProjectTags   = require('./lib/format-tags');
+const nodeVersionList     = require('./node-versions');
+
+module.exports = class extends Generator {
+  constructor(args, opts) {
+    super(args, opts);
   }
-  return kebabedName+ '-service';
-};
 
-const validateServiceName = function(str) {
-  return (str.length > '-service'.length) &&
-    (str.indexOf('service') >= 0);
-};
-
-const validateGithubUri = function(str) {
-  return str.indexOf('git') === 0 && (str.indexOf('github') >= 0);
-};
-
-const formatProjectTags = function(str) {
-  tagStr = str || '';
-  return tagStr.split(',').map((tag) => tag.replace(/\s/g, ''));
-};
-
-const nodeVersionList = [
-  '6.4',
-  '7.1',
-];
-
-module.exports = generators.Base.extend({
-  initializing: function() {
+  initializing() {
     this.props = {};
-  },
+  }
 
-  prompting: function() {
+  prompting() {
+    let _this = this;
     return this.prompt([
       {
         name: 'userviceName',
         type: 'input',
         message: 'Micro-service name:',
-        default: makeGeneratorName(path.basename(process.cwd())),
-        filter: makeGeneratorName,
+        default: formatServiceName(path.basename(process.cwd())),
+        filter: formatServiceName,
         validate: validateServiceName,
       }, {
-        name: 'githubURI',
+        name: 'projectDescription',
         type: 'input',
-        message: 'Github URI:',
-        default: 'https://github.com/sunsetriders/service',
-        validate: validateGithubUri,
+        message: 'This project description:',
+        default: '',
       }, {
         name: 'nodeVersion',
         type: 'list',
@@ -60,23 +41,46 @@ module.exports = generators.Base.extend({
         default: 0,
         choices: nodeVersionList,
       }, {
-        name: 'projectDescription',
-        type: 'input',
-        message: 'This project description:',
-        default: '',
-      }, {
         name: 'projectTags',
         type: 'input',
         message: 'This project tags:',
         default: 'service',
         filter: formatProjectTags,
       },
+      {
+        name: 'github',
+        type: 'confirm',
+        message: 'Should we start a Github repository?',
+      },
+      {
+        when: function(response) {
+          return response.github;
+        },
+        name: 'gitURI',
+        type: 'input',
+        message: 'Github URI:',
+        default: 'https://github.com/',
+        validate: validateGitUri,
+      },
+      {
+        name: 'cloud66',
+        type: 'confirm',
+        message: 'Should we start Cloud66 stacks?',
+      },
+      {
+        name: 'Codeship',
+        type: 'confirm',
+        message: 'Should we start a Codeship project?',
+      },
     ]).then(function(props) {
-      this.props = props;
-    }.bind(this));
-  },
+      if (!props.github) {
+        props.gitURI = '';
+      }
+      _this.props = props;
+    });
+  }
 
-  createServiceDir: function() {
+  createServiceDir() {
     if (path.basename(this.destinationPath()) !== this.props.userviceName) {
       this.log(
         'Your generator must be inside a folder named ' +
@@ -86,14 +90,15 @@ module.exports = generators.Base.extend({
       mkdirp(this.props.userviceName);
       this.destinationRoot(this.destinationPath(this.props.userviceName));
     }
-  },
+  }
 
-  projectFiles: function() {
+  projectFiles() {
     [
       'Dockerfile',
       'docker-compose.yml',
-      'package.json',
       'README.md',
+      'ARCHITECTURE.md',
+      'package.json',
     ].forEach((file) => {
       this.fs.copyTpl(
         this.templatePath(file),
@@ -101,15 +106,34 @@ module.exports = generators.Base.extend({
         this.props
       );
     });
-  },
+  }
 
-  dotFiles: function() {
+  /**
+   *  Add the chosen tags to package.json tags session
+   */
+  extendingPackageJSON() {
+    this.log('Adding chosen tags in package.json - session "keywords"');
+    const pkg = this.fs.readJSON(this.destinationPath('package.json'), {});
+    extend(pkg, {
+      dependencies: {
+        // Add production dependencies
+      },
+      devDependencies: {
+        // Add development dependencies
+      },
+    });
+    pkg.keywords = (pkg.keywords || []).concat(this.props.projectTags);
+
+    this.fs.writeJSON(this.destinationPath('package.json'), pkg);
+  }
+
+  dotFiles() {
     [
-      ['dockerignore', '.dockerignore'],
-      ['env.example', '.env.example'],
-      ['eslintignore', '.eslintignore'],
-      ['eslintrc.js', '.eslintrc.js'],
-      ['gitignore', '.gitignore'],
+      ['_dockerignore', '.dockerignore'],
+      ['_env.example', '.env.example'],
+      ['_eslintignore', '.eslintignore'],
+      ['_eslintrc.js', '.eslintrc.js'],
+      ['_gitignore', '.gitignore'],
       ['_github/PULL_REQUEST_TEMPLATE.md', '.github/PULL_REQUEST_TEMPLATE.md'],
     ].forEach((file) => {
       this.fs.copyTpl(
@@ -118,9 +142,9 @@ module.exports = generators.Base.extend({
         this.props
       );
     });
-  },
+  }
 
-  binFolder: function() {
+  binFolder() {
     [
       'bin/api.js',
       'bin/docs.js',
@@ -131,9 +155,9 @@ module.exports = generators.Base.extend({
         this.props
       );
     });
-  },
+  }
 
-  testsFolder: function() {
+  testsFolder() {
     [
       'tests/mocha.opts',
       'tests/contract/api-test.js',
@@ -145,9 +169,9 @@ module.exports = generators.Base.extend({
         this.props
       );
     });
-  },
+  }
 
-  configFolder: function() {
+  configFolder() {
     [
       'config/local.js',
     ].forEach((file) => {
@@ -157,9 +181,9 @@ module.exports = generators.Base.extend({
         this.props
       );
     });
-  },
+  }
 
-  libFolder: function() {
+  libFolder() {
     [
       'lib/api-key-security.js',
       'lib/app.js',
@@ -180,9 +204,9 @@ module.exports = generators.Base.extend({
         this.props
       );
     });
-  },
+  }
 
-  srcFolder: function() {
+  srcFolder() {
     [
       'src/service.js',
       'src/doc.json',
@@ -193,9 +217,9 @@ module.exports = generators.Base.extend({
         this.props
       );
     });
-  },
+  }
 
-  srcRoutesFolder: function() {
+  srcRoutesFolder() {
     [
       'src/routes/api-docs.js',
     ].forEach((file) => {
@@ -205,49 +229,44 @@ module.exports = generators.Base.extend({
         this.props
       );
     });
-  },
+  }
 
-
-  extendingPackageJSON: function() {
-    const pkg = this.fs.readJSON(this.destinationPath('package.json'), {});
-    extend(pkg, {
-      dependencies: {
-        // Add production dependencies
-      },
-      devDependencies: {
-        // Add development dependencies
-      },
-    });
-    pkg.keywords = (pkg.keywords || []).concat(this.props.projectTags);
-
-    this.fs.writeJSON(this.destinationPath('package.json'), pkg);
-  },
-
-  install: function() {
-    this.composeWith('git-init', {
-      options: {commit: '[init]' + this.props.userviceName + ' barebones - created.'},
-    }, {
-      local: require.resolve('generator-git-init'),
-    });
-    this.composeWith(
-      'generic-service:cloud66',
-      {
-        options: {
-          repoUrl: this.props.githubURI,
-          serviceName: this.props.userviceName,
-        },
-      },
-      {}
+  install() {
+    if (this.options.github) {
+      this.composeWith('git-init', {
+        options: {commit: 'Initial commit: ' + this.props.userviceName + ' barebones created.'},
+      }, {
+        local: require.resolve('generator-git-init'),
+      });
+      if (this.options.cloud66) {
+        this.composeWith(
+          'micro-service:cloud66',
+          {
+            options: {
+              repoUrl: this.props.gitURI,
+              serviceName: this.props.userviceName,
+            },
+          }
+        );
+      }
+      if (this.options.codeship) {
+        this.composeWith(
+          'micro-service:codeship',
+          {
+            options: {
+              nodeVersion: this.props.nodeVersion,
+            },
+          }
+        );
+      }
+    }
+    this.log('\n' +
+      chalk.underline.bold('Without a github repository it is not possible to start Cloud66 and Codeship.') +
+      '\nending...'
     );
-    this.composeWith(
-      'generic-service:codeship',
-      {
-        options: {
-          nodeVersion: this.props.nodeVersion,
-        },
-      },
-      {}
-    );
+  }
+
+  end() {
     this.installDependencies({bower: false});
-  },
-});
+  }
+};

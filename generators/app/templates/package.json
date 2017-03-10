@@ -3,14 +3,19 @@
   "version": "0.0.1",
   "description": "<%= projectDescription %>",
   "contributors": [
-    "CHANGE THIS LATER <contributor@email.net> (http://github.com/contributor)"
+    "Gustavo Villalta <gvillalta@daitangroup.com> (http://github.com/gvillalta)",
+    "Habner Geotto <hgerotto@daitangroup.com> (http://github.com/habner)",
+    "Juliano Coimbra <jcoimbra@daitangroup.com> (http://github.com/jmcoimbra)",
+    "Marcio Barbosa <mbarbosa@daitangroup.com> (http://github.com/marciodaitan)",
+    "Leonardo Castro <lscastro@daitangroup.com> (http://github.com/leonardosarmentocastro)",
+    "Carina Cheng <ccheng@daitangroup.com> (UI/UX Designer)"
   ],
   "author": "Daitan Group",
   "license": "UNLICENSED",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "<%= githubURI %>"
+    "url": "<%= gitURI %>"
   },
   "scripts": {
     "docs":          "npm run docs:swagger",
