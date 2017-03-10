@@ -6,7 +6,7 @@ const extend    = require('deep-extend');
 
 const formatProjectTags   = require('./lib/format-tags');
 const formatServiceName   = require('./lib/format-service-name');
-const importTemplateFiles = require('./lib/import-template-files');
+const importTemplateFiles = require('../lib/import-template-files');
 const nodeVersionList     = require('./node-versions');
 const validateGitUri      = require('./lib/validate-git-uri');
 const validateServiceName = require('./lib/validate-service-name');

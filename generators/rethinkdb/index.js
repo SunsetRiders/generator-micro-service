@@ -1,6 +1,8 @@
 const fs        = require('fs');
 const chalk     = require('chalk');
 const Generator = require('yeoman-generator');
+const importTemplateFiles = require('../lib/import-template-files');
+const importTemplateFilesDefault  = importTemplateFiles((filename) => filename)((filename) => filename);
 
 module.exports = class extends Generator {
 
@@ -13,16 +15,10 @@ module.exports = class extends Generator {
   }
 
   write() {
-    [
+    importTemplateFilesDefault([
       'lib/rethinkdb.js',
-      'config/rethinkdb.js',
-    ].forEach((file) => {
-      this.fs.copyTpl(
-        this.templatePath(file),
-        this.destinationPath(file),
-        this.props
-      );
-    });
+      'config/rethinkdb.js'
+    ]);
     const errMessage = '\n' +
       chalk.bgRed('RethinkDB environment variables could not be appended in .env.example file, ' +
       'please do it yourself.');
