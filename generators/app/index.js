@@ -10,6 +10,21 @@ const validateGitUri      = require('./lib/validate-git-uri');
 const formatProjectTags   = require('./lib/format-tags');
 const nodeVersionList     = require('./node-versions');
 
+const choicesDatabases = [
+  {
+    name: 'Postgres',
+    checked: false,
+  },
+  {
+    name: 'Redis',
+    checked: false,
+  },
+  {
+    name: 'RethinkDB',
+    checked: false,
+  },
+];
+
 module.exports = class extends Generator {
   constructor(args, opts) {
     super(args, opts);
@@ -46,6 +61,12 @@ module.exports = class extends Generator {
         message: 'This project tags:',
         default: 'service',
         filter: formatProjectTags,
+      },
+      {
+        name: 'databases',
+        type: 'checkbox',
+        message: 'Which databases are going to be used?',
+        choices: choicesDatabases,
       },
       {
         name: 'github',
@@ -232,13 +253,40 @@ module.exports = class extends Generator {
   }
 
   install() {
-    if (this.options.github) {
+    const _this = this;
+    if (this.props.databases.length) {
+      this.props.databases.forEach(function(database) {
+        switch(database) {
+          case 'Postgres':
+            _this.composeWith(
+              'micro-service:postgres',
+              {}
+            );
+            break;
+          case 'Redis':
+            _this.composeWith(
+              'micro-service:redis',
+              {}
+            );
+            break;
+          case 'RethinkDB':
+            _this.composeWith(
+              'micro-service:rethinkdb',
+              {}
+            );
+            break;
+          default:
+            _this.log('\n' + chalk.bgRed(database + ' is not an option for databases! Doing nothing with it.'));
+        }
+      });
+    }
+    if (this.props.github) {
       this.composeWith('git-init', {
         options: {commit: 'Initial commit: ' + this.props.userviceName + ' barebones created.'},
       }, {
         local: require.resolve('generator-git-init'),
       });
-      if (this.options.cloud66) {
+      if (this.props.cloud66) {
         this.composeWith(
           'micro-service:cloud66',
           {
@@ -249,7 +297,7 @@ module.exports = class extends Generator {
           }
         );
       }
-      if (this.options.codeship) {
+      if (this.props.codeship) {
         this.composeWith(
           'micro-service:codeship',
           {
@@ -259,6 +307,10 @@ module.exports = class extends Generator {
           }
         );
       }
+    }
+    // giving latest warnings in the console
+    if (!this.props.databases.length) {
+      this.log('\n' + chalk.bold('No databases to set and configure.'));
     }
     this.log('\n' +
       chalk.underline.bold('Without a github repository it is not possible to start Cloud66 and Codeship.') +
