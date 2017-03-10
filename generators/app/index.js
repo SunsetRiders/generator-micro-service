@@ -122,7 +122,7 @@ module.exports = class extends Generator {
       'README.md',
       'ARCHITECTURE.md',
       'package.json'
-    ])
+    ]);
   }
 
   dockerFiles() {
@@ -160,7 +160,7 @@ module.exports = class extends Generator {
       ['_eslintignore', '.eslintignore'],
       ['_eslintrc.js', '.eslintrc.js'],
       ['_gitignore', '.gitignore'],
-      ['_github/PULL_REQUEST_TEMPLATE.md', '.github/PULL_REQUEST_TEMPLATE.md'],
+      ['_github/PULL_REQUEST_TEMPLATE.md', '.github/PULL_REQUEST_TEMPLATE.md']
     ]);
   }
 
@@ -174,14 +174,14 @@ module.exports = class extends Generator {
   testsFolder() {
     importTemplateFilesDefault(this)([
       'tests/mocha.opts',
-      'tests/contract/api-test.js',
+      'tests/functional/api-test.js',
       'tests/unit/config-test.js'
     ]);
   }
 
   configFolder() {
     importTemplateFilesDefault(this)([
-      'config/local.js',
+      'config/local.js'
     ]);
   }
 
@@ -203,33 +203,21 @@ module.exports = class extends Generator {
   }
 
   srcFolder() {
-    [
+    importTemplateFilesDefault(this)([
       'src/doc.json'
-    ].forEach((file) => {
-      this.fs.copyTpl(
-        this.templatePath(file),
-        this.destinationPath(file),
-        this.props
-      );
-    });
+    ]);
   }
 
   srcServicesFolder() {
-    [
+    importTemplateFilesDefault(this)([
       'src/services/template-service.js'
-    ].forEach((file) => {
-      this.fs.copyTpl(
-        this.templatePath(file),
-        this.destinationPath(file),
-        this.props
-      );
-    });
+    ]);
   }
 
   srcRoutesFolder() {
     importTemplateFilesDefault(this)([
       'src/routes/api-docs.js'
-    ])
+    ]);
   }
 
   install() {
