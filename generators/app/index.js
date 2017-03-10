@@ -4,11 +4,15 @@ const mkdirp    = require('mkdirp');
 const path      = require('path');
 const extend    = require('deep-extend');
 
-const formatServiceName   = require('./lib/format-service-name');
-const validateServiceName = require('./lib/validate-service-name');
-const validateGitUri      = require('./lib/validate-git-uri');
 const formatProjectTags   = require('./lib/format-tags');
+const formatServiceName   = require('./lib/format-service-name');
+const importTemplateFiles = require('./lib/import-template-files');
 const nodeVersionList     = require('./node-versions');
+const validateGitUri      = require('./lib/validate-git-uri');
+const validateServiceName = require('./lib/validate-service-name');
+
+const importTemplateFilesDefault  = importTemplateFiles(filename => filename)(filename => filename)
+const importTemplateFilesDotfiles = importTemplateFiles(filenames => filenames[0])(filenames => filenames[1])
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -93,19 +97,21 @@ module.exports = class extends Generator {
   }
 
   projectFiles() {
-    [
-      'Dockerfile',
-      'docker-compose.yml',
+    importTemplateFilesDefault(this)([
       'README.md',
       'ARCHITECTURE.md',
       'package.json',
-    ].forEach((file) => {
-      this.fs.copyTpl(
-        this.templatePath(file),
-        this.destinationPath(file),
-        this.props
-      );
-    });
+    ])
+  }
+
+  dockerFiles() {
+    importTemplateFilesDefault(this)([
+      'Dockerfile',
+      'docker-compose.yml',
+    ]);
+    importTemplateFilesDotfiles(this)([
+      ['_dockerignore', '.dockerignore']
+    ]);
   }
 
   /**
@@ -128,63 +134,38 @@ module.exports = class extends Generator {
   }
 
   dotFiles() {
-    [
-      ['_dockerignore', '.dockerignore'],
+    importTemplateFilesDotfiles(this)([
       ['_env.example', '.env.example'],
       ['_eslintignore', '.eslintignore'],
       ['_eslintrc.js', '.eslintrc.js'],
       ['_gitignore', '.gitignore'],
       ['_github/PULL_REQUEST_TEMPLATE.md', '.github/PULL_REQUEST_TEMPLATE.md'],
-    ].forEach((file) => {
-      this.fs.copyTpl(
-        this.templatePath(file[0]),
-        this.destinationPath(file[1]),
-        this.props
-      );
-    });
+    ])
   }
 
   binFolder() {
-    [
+    importTemplateFilesDefault(this)([
       'bin/api.js',
       'bin/docs.js',
-    ].forEach((file) => {
-      this.fs.copyTpl(
-        this.templatePath(file),
-        this.destinationPath(file),
-        this.props
-      );
-    });
+    ])
   }
 
   testsFolder() {
-    [
+    importTemplateFilesDefault(this)([
       'tests/mocha.opts',
       'tests/contract/api-test.js',
       'tests/unit/config-test.js',
-    ].forEach((file) => {
-      this.fs.copyTpl(
-        this.templatePath(file),
-        this.destinationPath(file),
-        this.props
-      );
-    });
+    ])
   }
 
   configFolder() {
-    [
+    importTemplateFilesDefault(this)([
       'config/local.js',
-    ].forEach((file) => {
-      this.fs.copyTpl(
-        this.templatePath(file),
-        this.destinationPath(file),
-        this.props
-      );
-    });
+    ])
   }
 
   libFolder() {
-    [
+    importTemplateFilesDefault(this)([
       'lib/api-key-security.js',
       'lib/app.js',
       'lib/api.js',
@@ -197,38 +178,20 @@ module.exports = class extends Generator {
       'lib/logger-transports.js',
       'lib/logger.js',
       'lib/openapi-generator.js',
-    ].forEach((file) => {
-      this.fs.copyTpl(
-        this.templatePath(file),
-        this.destinationPath(file),
-        this.props
-      );
-    });
+    ])
   }
 
   srcFolder() {
-    [
+    importTemplateFilesDefault(this)([
       'src/service.js',
       'src/doc.json',
-    ].forEach((file) => {
-      this.fs.copyTpl(
-        this.templatePath(file),
-        this.destinationPath(file),
-        this.props
-      );
-    });
+    ])
   }
 
   srcRoutesFolder() {
-    [
+    importTemplateFilesDefault(this)([
       'src/routes/api-docs.js',
-    ].forEach((file) => {
-      this.fs.copyTpl(
-        this.templatePath(file),
-        this.destinationPath(file),
-        this.props
-      );
-    });
+    ])
   }
 
   install() {
