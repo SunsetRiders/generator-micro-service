@@ -4,25 +4,29 @@ const mkdirp    = require('mkdirp');
 const path      = require('path');
 const extend    = require('deep-extend');
 
-const formatServiceName   = require('./lib/format-service-name');
-const validateServiceName = require('./lib/validate-service-name');
-const validateGitUri      = require('./lib/validate-git-uri');
 const formatProjectTags   = require('./lib/format-tags');
+const formatServiceName   = require('./lib/format-service-name');
+const importTemplateFiles = require('./lib/import-template-files');
 const nodeVersionList     = require('./node-versions');
+const validateGitUri      = require('./lib/validate-git-uri');
+const validateServiceName = require('./lib/validate-service-name');
+
+const importTemplateFilesDefault  = importTemplateFiles((filename) => filename)((filename) => filename);
+const importTemplateFilesDotfiles = importTemplateFiles((filenames) => filenames[0])((filenames) => filenames[1]);
 
 const choicesDatabases = [
   {
     name: 'Postgres',
-    checked: false,
+    checked: false
   },
   {
     name: 'Redis',
-    checked: false,
+    checked: false
   },
   {
     name: 'RethinkDB',
-    checked: false,
-  },
+    checked: false
+  }
 ];
 
 module.exports = class extends Generator {
@@ -43,35 +47,35 @@ module.exports = class extends Generator {
         message: 'Micro-service name:',
         default: formatServiceName(path.basename(process.cwd())),
         filter: formatServiceName,
-        validate: validateServiceName,
+        validate: validateServiceName
       }, {
         name: 'projectDescription',
         type: 'input',
         message: 'This project description:',
-        default: '',
+        default: ''
       }, {
         name: 'nodeVersion',
         type: 'list',
         message: 'Node Version: ',
         default: 0,
-        choices: nodeVersionList,
+        choices: nodeVersionList
       }, {
         name: 'projectTags',
         type: 'input',
         message: 'This project tags:',
         default: 'service',
-        filter: formatProjectTags,
+        filter: formatProjectTags
       },
       {
         name: 'databases',
         type: 'checkbox',
         message: 'Which databases are going to be used?',
-        choices: choicesDatabases,
+        choices: choicesDatabases
       },
       {
         name: 'github',
         type: 'confirm',
-        message: 'Should we start a Github repository?',
+        message: 'Should we start a Github repository?'
       },
       {
         when: function(response) {
@@ -81,18 +85,18 @@ module.exports = class extends Generator {
         type: 'input',
         message: 'Github URI:',
         default: 'https://github.com/',
-        validate: validateGitUri,
+        validate: validateGitUri
       },
       {
         name: 'cloud66',
         type: 'confirm',
-        message: 'Should we start Cloud66 stacks?',
+        message: 'Should we start Cloud66 stacks?'
       },
       {
         name: 'Codeship',
         type: 'confirm',
-        message: 'Should we start a Codeship project?',
-      },
+        message: 'Should we start a Codeship project?'
+      }
     ]).then(function(props) {
       if (!props.github) {
         props.gitURI = '';
@@ -114,19 +118,21 @@ module.exports = class extends Generator {
   }
 
   projectFiles() {
-    [
-      'Dockerfile',
-      'docker-compose.yml',
+    importTemplateFilesDefault(this)([
       'README.md',
       'ARCHITECTURE.md',
-      'package.json',
-    ].forEach((file) => {
-      this.fs.copyTpl(
-        this.templatePath(file),
-        this.destinationPath(file),
-        this.props
-      );
-    });
+      'package.json'
+    ])
+  }
+
+  dockerFiles() {
+    importTemplateFilesDefault(this)([
+      'Dockerfile',
+      'docker-compose.yml'
+    ]);
+    importTemplateFilesDotfiles(this)([
+      ['_dockerignore', '.dockerignore']
+    ]);
   }
 
   /**
@@ -141,7 +147,7 @@ module.exports = class extends Generator {
       },
       devDependencies: {
         // Add development dependencies
-      },
+      }
     });
     pkg.keywords = (pkg.keywords || []).concat(this.props.projectTags);
 
@@ -149,63 +155,38 @@ module.exports = class extends Generator {
   }
 
   dotFiles() {
-    [
-      ['_dockerignore', '.dockerignore'],
+    importTemplateFilesDotfiles(this)([
       ['_env.example', '.env.example'],
       ['_eslintignore', '.eslintignore'],
       ['_eslintrc.js', '.eslintrc.js'],
       ['_gitignore', '.gitignore'],
       ['_github/PULL_REQUEST_TEMPLATE.md', '.github/PULL_REQUEST_TEMPLATE.md'],
-    ].forEach((file) => {
-      this.fs.copyTpl(
-        this.templatePath(file[0]),
-        this.destinationPath(file[1]),
-        this.props
-      );
-    });
+    ]);
   }
 
   binFolder() {
-    [
+    importTemplateFilesDefault(this)([
       'bin/api.js',
-      'bin/docs.js',
-    ].forEach((file) => {
-      this.fs.copyTpl(
-        this.templatePath(file),
-        this.destinationPath(file),
-        this.props
-      );
-    });
+      'bin/docs.js'
+    ]);
   }
 
   testsFolder() {
-    [
+    importTemplateFilesDefault(this)([
       'tests/mocha.opts',
       'tests/contract/api-test.js',
-      'tests/unit/config-test.js',
-    ].forEach((file) => {
-      this.fs.copyTpl(
-        this.templatePath(file),
-        this.destinationPath(file),
-        this.props
-      );
-    });
+      'tests/unit/config-test.js'
+    ]);
   }
 
   configFolder() {
-    [
+    importTemplateFilesDefault(this)([
       'config/local.js',
-    ].forEach((file) => {
-      this.fs.copyTpl(
-        this.templatePath(file),
-        this.destinationPath(file),
-        this.props
-      );
-    });
+    ]);
   }
 
   libFolder() {
-    [
+    importTemplateFilesDefault(this)([
       'lib/api-key-security.js',
       'lib/app.js',
       'lib/api.js',
@@ -217,19 +198,13 @@ module.exports = class extends Generator {
       'lib/logger-request.js',
       'lib/logger-transports.js',
       'lib/logger.js',
-      'lib/openapi-generator.js',
-    ].forEach((file) => {
-      this.fs.copyTpl(
-        this.templatePath(file),
-        this.destinationPath(file),
-        this.props
-      );
-    });
+      'lib/openapi-generator.js'
+    ]);
   }
 
   srcFolder() {
     [
-      'src/doc.json',
+      'src/doc.json'
     ].forEach((file) => {
       this.fs.copyTpl(
         this.templatePath(file),
@@ -241,7 +216,7 @@ module.exports = class extends Generator {
 
   srcServicesFolder() {
     [
-      'src/services/service.js',
+      'src/services/template-service.js'
     ].forEach((file) => {
       this.fs.copyTpl(
         this.templatePath(file),
@@ -252,15 +227,9 @@ module.exports = class extends Generator {
   }
 
   srcRoutesFolder() {
-    [
-      'src/routes/api-docs.js',
-    ].forEach((file) => {
-      this.fs.copyTpl(
-        this.templatePath(file),
-        this.destinationPath(file),
-        this.props
-      );
-    });
+    importTemplateFilesDefault(this)([
+      'src/routes/api-docs.js'
+    ])
   }
 
   install() {
@@ -293,9 +262,9 @@ module.exports = class extends Generator {
     }
     if (this.props.github) {
       this.composeWith('git-init', {
-        options: {commit: 'Initial commit: ' + this.props.userviceName + ' barebones created.'},
+        options: {commit: 'Initial commit: ' + this.props.userviceName + ' barebones created.'}
       }, {
-        local: require.resolve('generator-git-init'),
+        local: require.resolve('generator-git-init')
       });
       if (this.props.cloud66) {
         this.composeWith(
@@ -303,8 +272,8 @@ module.exports = class extends Generator {
           {
             options: {
               repoUrl: this.props.gitURI,
-              serviceName: this.props.userviceName,
-            },
+              serviceName: this.props.userviceName
+            }
           }
         );
       }
@@ -313,8 +282,8 @@ module.exports = class extends Generator {
           'micro-service:codeship',
           {
             options: {
-              nodeVersion: this.props.nodeVersion,
-            },
+              nodeVersion: this.props.nodeVersion
+            }
           }
         );
       }

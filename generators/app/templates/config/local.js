@@ -11,24 +11,14 @@ try {
   fs.accessSync('.env', fs.F_OK);
   require('dotenv').config({silent: false});
 } catch (e) {
-  console.log('Not using dotenv');
+  console.log('DOTENV: Not using');
 }
 
+const thisFilename = path.basename(__filename);
 const appRoot = path.dirname(__dirname);
 const projectRoot = appRoot;
 
-// Check if RethinkDB is integrated
-let rethinkConfig = '';
-fs.exists('./rethinkdb.js', (exists) => {
-  if (exists) {
-    rethinkConfig = require('./rethinkdb');
-  }
-});
-
-/**
- Load env vars from .env file
- */
-module.exports = {
+const defaultProjectConfig = {
   api: {
     host: env.string('API_HOST'),
     key: env.string('API_KEY'),
@@ -37,13 +27,32 @@ module.exports = {
   },
   configName: path.basename(__filename),
   logs: {
-    transports: env.array('LOGS_TRANSPORTS', 'string', ['console']),
-    log: env.string('LOG_LEVEL'),
-    color: env.string('LOGS_COLOR'),
-    logentriesToken: env.string('LOGS_LOGENTRIES_TOKEN'),
     blackList: [],
-    logPath: path.resolve(appRoot, './log')
+    level: env.string('LOG_LEVEL', 'info'),
+    logentriesToken: env.string('LOGS_LOGENTRIES_TOKEN', null),
+    logPath: path.resolve(appRoot, './log'),
+    transports: env.array('LOGS_TRANSPORTS', 'string', ['console'])
   },
-  projectRoot: projectRoot,
-  rethinkdb: rethinkConfig,
+  projectRoot: projectRoot
 };
+
+const isFile = (dirname) => (filename) =>
+  fs.statSync(`${dirname}/${filename}`).isFile();
+
+const isNotCurrentFile = (currentFile) => (filename) => `${currentFile}` !== filename;
+
+const isJSorJSON = (filename) => ['js', 'json'].
+  map((allowedExt) => filename.split('.').pop() === allowedExt).
+  reduce((allow, allowedExt) => allow || allowedExt, false);
+
+const configFiles = (currentFile) => (dirname) =>
+  fs.readdirSync(dirname)
+    .filter(isFile(dirname))
+    .filter(isNotCurrentFile(currentFile))
+    .filter(isJSorJSON)
+    .map((filename) => require(`${dirname}/${filename}`));
+
+const mergedConfigs = configFiles(thisFilename)(__dirname).
+  reduce((newConfig, config) => Object.assign(newConfig, config), defaultProjectConfig);
+
+module.exports = mergedConfigs;

@@ -1,7 +1,6 @@
 const fs        = require('fs');
 const chalk     = require('chalk');
 const Generator = require('yeoman-generator');
-const mkdirp    = require('mkdirp');
 
 module.exports = class extends Generator {
 

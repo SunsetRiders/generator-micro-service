@@ -17,8 +17,7 @@ if (config.transports.includes('file') || config.transports.includes('logrotate'
 const mode      = 'default';
 const logConfig = {
   exitOnError:  false,
-  level:        config.log,
-  colorStatus:  config.color,
+  level:        config.level,
   transports:   transports.map(transport => transport.call({}, mode))
 };
 
