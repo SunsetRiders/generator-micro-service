@@ -183,7 +183,7 @@ module.exports = class extends Generator {
 
   srcFolder() {
     importTemplateFilesDefault(this)([
-      'src/service.js',
+      'src/services/template-service.js',
       'src/doc.json',
     ])
   }
