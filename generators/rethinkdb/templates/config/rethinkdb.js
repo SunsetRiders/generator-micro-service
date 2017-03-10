@@ -29,7 +29,7 @@ const rethinkConfig = {
   }
 };
 
-module.exports = Object.keys(rethinkConfig).reduce((obj, key) => {
+let configs = Object.keys(rethinkConfig).reduce((obj, key) => {
   if (rethinkConfig[key]) {
     switch (key) {
       case 'authKey':
@@ -59,3 +59,5 @@ module.exports = Object.keys(rethinkConfig).reduce((obj, key) => {
   obj[key] = rethinkConfig[key];
   return obj;
 }, {});
+
+module.exports = {rethinkdb: configs};
