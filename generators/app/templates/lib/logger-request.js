@@ -17,13 +17,12 @@ if (config.transports.includes('file') || config.transports.includes('logrotate'
 const mode      = 'request';
 const logConfig = {
   bodyBlacklist:  config.blackList,
-  colorStatus:    config.color,
   expressFormat:  false,
   level:          config.level,
   meta:           true,
   mode:           'request',
   statusLevels:   true,
-  transports:     transports.map(transport => transport.call({}, mode))
+  transports:     transports.map((transport) => transport.call({}, mode))
 };
 
 const constructor = expressWinston.logger;

@@ -1,11 +1,11 @@
 module.exports = {
-  'extends': 'google',
+  extends: 'google',
   env: {
     mocha: true,
     node: true,
   },
   globals: {},
-  'parserOptions': {
+  parserOptions: {
     'ecmaVersion': 6,
     'sourceType': 'module'
   },
@@ -14,6 +14,8 @@ module.exports = {
     'no-multi-spaces': 0,
     'strict': [2, 'global'],
     'max-len': [2, 120, 2],
-    'no-unused-expressions': 0
+    'no-unused-expressions': 0,
+    'max-nested-callbacks': 0,
+    'comma-dangle': ["error", "never"]
   }
 };
