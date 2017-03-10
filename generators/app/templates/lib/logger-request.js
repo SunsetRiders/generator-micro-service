@@ -19,7 +19,7 @@ const logConfig = {
   bodyBlacklist:  config.blackList,
   colorStatus:    config.color,
   expressFormat:  false,
-  level:          config.log,
+  level:          config.level,
   meta:           true,
   mode:           'request',
   statusLevels:   true,
