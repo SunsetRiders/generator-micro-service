@@ -229,8 +229,19 @@ module.exports = class extends Generator {
 
   srcFolder() {
     [
-      'src/service.js',
       'src/doc.json',
+    ].forEach((file) => {
+      this.fs.copyTpl(
+        this.templatePath(file),
+        this.destinationPath(file),
+        this.props
+      );
+    });
+  }
+
+  srcServicesFolder() {
+    [
+      'src/services/service.js',
     ].forEach((file) => {
       this.fs.copyTpl(
         this.templatePath(file),
