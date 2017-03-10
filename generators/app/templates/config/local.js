@@ -22,7 +22,7 @@ const projectRoot = appRoot;
  */
 let rethinkConfig = {
   authKey: env.string('RETHINKDB_AUTHKEY', ''),
-  bufferSize: env.int('RETHINKDB_BUFFER_SIZE', ''),
+  bufferSize: env.int('RETHINKDB_BUFFER_SIZE', null),
   db: env.string('RETHINKDB_DATABASE'),
   host: env.string('RETHINKDB_HOST'),
   max: env.int('RETHINKDB_MAX', null),
