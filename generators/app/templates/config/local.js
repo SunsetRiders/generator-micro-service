@@ -11,13 +11,14 @@ try {
   fs.accessSync('.env', fs.F_OK);
   require('dotenv').config({silent: false});
 } catch (e) {
-  console.log('Not using dotenv');
+  console.log('DOTENV: Not using');
 }
 
+const thisFilename = path.basename(__filename);
 const appRoot = path.dirname(__dirname);
 const projectRoot = appRoot;
 
-module.exports = {
+const defaultProjectConfig = {
   api: {
     host: env.string('API_HOST'),
     key: env.string('API_KEY'),
@@ -27,7 +28,6 @@ module.exports = {
   configName: path.basename(__filename),
   logs: {
     blackList: [],
-    color: env.bool('LOGS_COLOR', false),
     level: env.string('LOG_LEVEL', 'info'),
     logentriesToken: env.string('LOGS_LOGENTRIES_TOKEN', null),
     logPath: path.resolve(appRoot, './log'),
@@ -35,3 +35,24 @@ module.exports = {
   },
   projectRoot: projectRoot
 };
+
+const isFile = (dirname) => (filename) =>
+  fs.statSync(`${dirname}/${filename}`).isFile();
+
+const isNotCurrentFile = (currentFile) => (filename) => `${currentFile}` !== filename;
+
+const isJSorJSON = (filename) => ['js', 'json'].
+  map((allowedExt) => filename.split('.').pop() === allowedExt).
+  reduce((allow, allowedExt) => allow || allowedExt, false);
+
+const configFiles = (currentFile) => (dirname) =>
+  fs.readdirSync(dirname)
+    .filter(isFile(dirname))
+    .filter(isNotCurrentFile(currentFile))
+    .filter(isJSorJSON)
+    .map((filename) => require(`${dirname}/${filename}`));
+
+const mergedConfigs = configFiles(thisFilename)(__dirname).
+  reduce((newConfig, config) => Object.assign(newConfig, config), defaultProjectConfig);
+
+module.exports = mergedConfigs;

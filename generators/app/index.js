@@ -11,8 +11,8 @@ const nodeVersionList     = require('./node-versions');
 const validateGitUri      = require('./lib/validate-git-uri');
 const validateServiceName = require('./lib/validate-service-name');
 
-const importTemplateFilesDefault  = importTemplateFiles(filename => filename)(filename => filename)
-const importTemplateFilesDotfiles = importTemplateFiles(filenames => filenames[0])(filenames => filenames[1])
+const importTemplateFilesDefault  = importTemplateFiles(filename => filename)(filename => filename);
+const importTemplateFilesDotfiles = importTemplateFiles(filenames => filenames[0])(filenames => filenames[1]);
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -153,15 +153,20 @@ module.exports = class extends Generator {
   testsFolder() {
     importTemplateFilesDefault(this)([
       'tests/mocha.opts',
-      'tests/contract/api-test.js',
+      'tests/mocha-debug.opts',
       'tests/unit/config-test.js',
-    ])
+      'tests/functional/framework-configs.js',
+      'tests/functional/functional-framework.js',
+      'tests/functional/get-api-docs-tests.js',
+      'tests/functional/get-not-found-tests.js',
+      'tests/functional/README'
+    ]);
   }
 
   configFolder() {
     importTemplateFilesDefault(this)([
-      'config/local.js',
-    ])
+      'config/local.js'
+    ]);
   }
 
   libFolder() {
@@ -177,29 +182,29 @@ module.exports = class extends Generator {
       'lib/logger-request.js',
       'lib/logger-transports.js',
       'lib/logger.js',
-      'lib/openapi-generator.js',
-    ])
+      'lib/openapi-generator.js'
+    ]);
   }
 
   srcFolder() {
     importTemplateFilesDefault(this)([
       'src/service.js',
-      'src/doc.json',
-    ])
+      'src/doc.json'
+    ]);
   }
 
   srcRoutesFolder() {
     importTemplateFilesDefault(this)([
-      'src/routes/api-docs.js',
-    ])
+      'src/routes/api-docs.js'
+    ]);
   }
 
   install() {
     if (this.options.github) {
       this.composeWith('git-init', {
-        options: {commit: 'Initial commit: ' + this.props.userviceName + ' barebones created.'},
+        options: {commit: 'Initial commit: ' + this.props.userviceName + ' barebones created.'}
       }, {
-        local: require.resolve('generator-git-init'),
+        local: require.resolve('generator-git-init')
       });
       if (this.options.cloud66) {
         this.composeWith(
@@ -207,8 +212,8 @@ module.exports = class extends Generator {
           {
             options: {
               repoUrl: this.props.gitURI,
-              serviceName: this.props.userviceName,
-            },
+              serviceName: this.props.userviceName
+            }
           }
         );
       }
@@ -217,8 +222,8 @@ module.exports = class extends Generator {
           'micro-service:codeship',
           {
             options: {
-              nodeVersion: this.props.nodeVersion,
-            },
+              nodeVersion: this.props.nodeVersion
+            }
           }
         );
       }
