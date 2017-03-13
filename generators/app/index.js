@@ -155,8 +155,9 @@ module.exports = class extends Generator {
       'tests/mocha.opts',
       'tests/mocha-debug.opts',
       'tests/unit/config-test.js',
-      'tests/functional/framework-configs.js',
       'tests/functional/functional-framework.js',
+      'tests/functional/runner-configs.js',
+      'tests/functional/framework-runner.js',
       'tests/functional/get-api-docs-tests.js',
       'tests/functional/get-not-found-tests.js',
       'tests/functional/README'
@@ -182,6 +183,7 @@ module.exports = class extends Generator {
       'lib/logger-request.js',
       'lib/logger-transports.js',
       'lib/logger.js',
+      'lib/generate-curl.js',
       'lib/openapi-generator.js'
     ]);
   }

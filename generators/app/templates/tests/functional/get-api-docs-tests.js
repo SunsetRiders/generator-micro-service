@@ -7,11 +7,11 @@ ff.addNewFunctionalTest({
   httpMethod: 'GET',
   routePath: 'api-docs',
   extraHeaders: {
-    api_key: config.api_key // eslint-disable-line camelcase
+    api_key: config.api.key // eslint-disable-line camelcase
   },
   body: null,
   expectedStatusCode: 200,
   bodyValidator: body => {
-    expect(response.info.version).to.equal('1.0.0');
+    expect(body.info.version).to.equal('1.0.0');
   }
 });

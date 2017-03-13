@@ -1,16 +1,21 @@
 How to add new functional tests?
 
-  1. Group the tests by route;
+  1. Name the test files following the rule:
 
-  2. Name the test files following the rule:
     <HTTP_METHOD>-<ROUTE_PATH_SEPARATED_BY_->-tests.js
+
+    - Create 1 test file for each route.
 
     Examples:
       post-users-tests.js
       get-users-{userId}-tests.js
 
-  3. Edit the file runner.js to define what tests must be ran:
+  2. Edit file runner-configs.js to define what tests must be ran:
     - The tests always run in serie
+    - Specify the test file name, including the .js extension
+
+  3. To see how to use the framework, just take a look at the examples,
+     or see the documentation on functional-framework.js
 
 
 Executing the tests

@@ -6,7 +6,7 @@ ff.addNewFunctionalTest({
   httpMethod: 'GET',
   routePath: 'not-found',
   extraHeaders: {
-    api_key: config.api_key // eslint-disable-line camelcase
+    api_key: config.api.key // eslint-disable-line camelcase
   },
   body: null,
   expectedStatusCode: 404,

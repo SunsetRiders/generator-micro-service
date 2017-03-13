@@ -1,7 +1,7 @@
 let frameworkConfigs = {};
 
 // Tests are ran in serie, in the specified order you provide here
-frameworkConfigs.testsToRun = [
+frameworkConfigs.testFilesToRun = [
   'get-api-docs-tests.js',
   'get-not-found-tests.js'
 ];

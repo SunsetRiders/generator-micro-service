@@ -1,12 +1,5 @@
-const Api    = require('../../lib/api');
-const api    = Api.instance();
+const config = require('getconfig');
 
-const config     = require('getconfig');
-const fmwConfigs = require('./framework-configs');
-
-const rp = require('request-promise');
-
-const logger        = require('../../lib/logger').default;
 const curlGenerator = require('../../lib/generate-curl');
 const util          = require('util');
 
@@ -26,44 +19,50 @@ let framework = {
   dataStorage: new Dict()
 };
 
-// Public Methods
-framework.addNewFunctionalTest = function(
-  testName,
-  httpMethod,
-  routePath,
-  extraHeaders,
-  body,
-  expectedStatusCode,
-  bodyValidator
-) {
+/**
+ * It register a new functional test to be run, within a test file.
+ *
+ * @param {object} testData
+ * @param {string} testData.testName The test name
+ * @param {string} testData.httpMethod The HTTP method. 'GET', 'POST', 'HEAD', 'PATCH', 'PUT' and so on
+ * @param {string} testData.routePath The crude route path, without the api/version stuff. DON'T put / in the beginnin
+ * @param {object} testData.extraHeaders An object where each key = Header name and value = Header value. Can be null
+ * @param {object} testData.body A javascript object to sent in the body. Can be null
+ * @param {number} testData.expectedStatusCode A number, like 200
+ * @param {function} testData.bodyValidator A funct that returns a Promise or throws an error when something is wrong
+ */
+framework.addNewFunctionalTest = function(testData) {
   // Sanity
   // TODO
 
-  testsData.push({
-    testName,
-    httpMethod,
-    routePath,
-    extraHeaders,
-    body,
-    expectedStatusCode,
-    bodyValidator
-  });
+  framework.testsData.push(testData);
 };
 
+/**
+ * Store data globally in the framework, so each test file can share some information.
+ *
+ * @param {string | number} key
+ * @param {string | number | object | null | undefined} value
+ */
 framework.storeData = function(key, value) {
-  dataStorage.add(key, value);
+  framework.dataStorage.add(key, value);
 };
 
+/**
+ * Retrieve global data saved in the framework.
+ *
+ * @param {string | number} key
+ * @return {string | number | object | null | undefined} value
+ */
 framework.getData = function(key) {
-  dataStorage.get(key);
+  return framework.dataStorage.get(key);
 };
 
-// Private Methods
-const generateCurl = function(request) {
-  return curlGenerator(request.mesthod, request.headers, request.body, request.uri);
+framework.generateCurl = function(request) {
+  return curlGenerator(request.method, request.headers, request.body, request.uri);
 };
 
-const verifyStatusCode = function(retrievedStatusCode, expectedStatusCode) {
+framework.verifyStatusCode = function(retrievedStatusCode, expectedStatusCode) {
   if (retrievedStatusCode === expectedStatusCode) {
     return Promise.resolve();
   }
@@ -72,7 +71,7 @@ const verifyStatusCode = function(retrievedStatusCode, expectedStatusCode) {
   return Promise.reject(error);
 };
 
-const prettifyError = function(
+framework.prettifyError = function(
   expectedStatusCode,
   request,
   response,
@@ -80,97 +79,25 @@ const prettifyError = function(
 ) {
   let newErrorMsg = '--- Test Error Details --- \n\n';
 
-  newErrorMsg += 'Expecting Status Code: ' + expectedStatusCode + '\n';
-  newErrorMsg += 'Retrieved Status Code: ' + response.statusCode + '\n\n';
+  newErrorMsg += '\t Request details: \n';
+  newErrorMsg += '\t\t' + util.inspect(request) + '\n\n';
 
-  newErrorMsg += 'Request details: \n';
-  newErrorMsg += '\t' + util.inspect(request) + '\n\n';
+  newErrorMsg += '\t Received response: \n';
+  newErrorMsg += '\t\t' + util.inspect(response) + '\n\n';
 
-  newErrorMsg += 'Received response: \n';
-  newErrorMsg += '\t' + util.inspect(response) + '\n\n';
+  newErrorMsg += '\t Used CURL: \n';
+  newErrorMsg += '\t\t' + framework.generateCurl(request) + '\n\n';
 
-  newErrorMsg += 'Used CURL: \n';
-  newErrorMsg += '\t' + generateCurl(request) + '\n\n';
+  newErrorMsg += '\t Expecting Status Code: ' + expectedStatusCode + '\n';
+  newErrorMsg += '\t Retrieved Status Code: ' + response.statusCode + '\n\n';
 
-  newErrorMsg += 'Error: \n';
-  newErrorMsg += '\t' + error + '\n\n';
+  newErrorMsg += '\t Error: \n';
+  newErrorMsg += '\t\t' + error + '\n\n';
 
   newErrorMsg += '-------------------------- \n';
 
   const newError = new Error(newErrorMsg);
   return Promise.reject(newError);
 };
-
-// Mocha will run this
-describe('Funcional Tests', () => {
-  before(done => {
-    api.start(done);
-  });
-
-  after(done => {
-    api.stop(done);
-  });
-
-  // Import tests, as specified on the config file...
-  fmwConfigs.testFilesToRun.forEach(testFileToAdd => {
-    require('./' + testFileToAdd);
-
-    // Dinamically construct the tests
-    describe(testFileToAdd, () => {
-      while (framework.testsData.length > 0) {
-        let testData = framework.testsData.shift();
-
-        it(testData.testName, function() {
-          let request = {
-            uri: framework.apiBase + '/' + testData.routePath,
-            method: testData.httpMethod,
-            resolveWithFullResponse: true
-          };
-
-          if (testData.extraHeaders) {
-            request.headers = testData.extraHeaders;
-          }
-
-          if (testData.body) {
-            request.body = testData.body;
-            request.json = true;
-          }
-
-          logger.info('\n\t',
-            'This request is being sent and we expect a ' + expectedStatusCode + ':',
-            '\n\n\t',
-            generateCurl(request),
-            '\n'
-          );
-
-          return rp(request)
-            .tap(
-              response => verifyStatusCode(response.statusCode, expectedStatusCode)
-            )
-            .tap(
-              response => framework.lastResponse = response
-            )
-            .then(response => {
-              if (bodyValidator) {
-                try {
-                  return bodyValidator(response.body || response.error);
-                } catch (error) {
-                  return Promise.reject(error);
-                }
-              }
-            })
-            .catch(
-              error => prettifyError(
-                expectedStatusCode,
-                request,
-                framework.lastResponse,
-                error
-              )
-            );
-        });
-      }
-    });
-  });
-});
 
 module.exports = framework;
