@@ -2,7 +2,7 @@ const fs        = require('fs');
 const chalk     = require('chalk');
 const Generator = require('yeoman-generator');
 const importTemplateFiles = require('../lib/import-template-files');
-const importTemplateFilesDefault  = importTemplateFiles((filename) => filename)((filename) => filename);
+const importTemplateFilesDefault  = importTemplateFiles(filename => filename)(filename => filename);
 
 module.exports = class extends Generator {
 
@@ -30,7 +30,7 @@ module.exports = class extends Generator {
         return;
       }
       // appending it to .env.example
-      fs.appendFile(this.destinationPath('.env.example'), fileContents, (err) => {
+      fs.appendFile(this.destinationPath('.env.example'), fileContents, err => {
         if (err) {
           this.log(err);
           this.log(errMessage);

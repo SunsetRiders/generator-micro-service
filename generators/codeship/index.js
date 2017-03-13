@@ -16,7 +16,7 @@ module.exports = class extends Generator {
       'codeship-services.yml',
       'codeship-steps.yml',
       'Dockerfile.test'
-    ].forEach((file) => {
+    ].forEach(file => {
       this.fs.copyTpl(
         this.templatePath(file),
         this.destinationPath(file),

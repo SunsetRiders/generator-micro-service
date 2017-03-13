@@ -16,7 +16,7 @@ if (config.transports.includes('file') || config.transports.includes('logrotate'
 
 const mode      = 'error';
 const logConfig = {
-  transports:   transports.map((transport) => transport.call({}, mode))
+  transports:   transports.map(transport => transport.call({}, mode))
 };
 
 const constructor = expressWinston.errorLogger;
