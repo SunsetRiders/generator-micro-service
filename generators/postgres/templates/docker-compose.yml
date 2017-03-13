@@ -1,0 +1,6 @@
+# postgres service
+# keep 2 spaces alignment so it can be appended to docker-compose.yml
+  postgres:
+    image: postgres
+    ports:
+      - '5432:5432'
