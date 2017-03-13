@@ -1,5 +1,0 @@
-POSTGRES_HOST=localhost
-POSTGRES_DB=db_service_development
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=
-POSTGRES_SSL=false
