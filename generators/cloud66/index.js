@@ -27,16 +27,16 @@ const atLeastOne = function(arr) {
 const c66AvailableEnviroments = [
   {
     name: 'development',
-    checked: true,
+    checked: true
   },
   {
     name: 'staging',
-    checked: true,
+    checked: true
   },
   {
     name: 'production',
-    checked: true,
-  },
+    checked: true
+  }
 ];
 
 const c66ServerAvailableVendors = ['aws', 'digitalocean'];
@@ -45,25 +45,25 @@ const commonQuestions = [
     name: 'c66ServerKeyName',
     message: 'Cloud66 - Server - Key Name',
     type: 'input',
-    validate: notEmpty,
+    validate: notEmpty
   }, {
     name: 'c66ServerVendor',
     message: 'Cloud66 - Server - Vendor',
     type: 'list',
     validate: atLeastOne,
-    choices: c66ServerAvailableVendors,
+    choices: c66ServerAvailableVendors
   }, {
     name: 'c66ServerName',
     type: 'input',
     message: 'Cloud66 - Server name:',
-    default: () => _.kebabCase(randomWord.random()),
-  },
+    default: () => _.kebabCase(randomWord.random())
+  }
 ];
 
 const awsRegions = [
   'us-east-1', 'us-west-1', 'us-west-2', 'sa-east-1', 'eu-central-1',
   'eu-west-1', 'ap-southeast-1', 'ap-northeast-1', 'ap-southeast-2',
-  'ap-northeast-2',
+  'ap-northeast-2'
 ];
 
 const awsSizes = [
@@ -77,16 +77,16 @@ const awsSizes = [
   'm3.xlarge', 'm3.2xlarge ', 'm4.large', 'm4.xlarge', 'm4.2xlarge',
   'm4.4xlarge', 'm4.10xlarge', 'r3.large', 'r3.xlarge', 'r3.2xlarge',
   'r3.4xlarge', 'r3.8xlarge', 't1.micro', 't2.nano', 't2.micro', 't2.small',
-  't2.medium', 't2.large', 'x1.32xlarge',
+  't2.medium', 't2.large', 'x1.32xlarge'
 ];
 
 const digitalOceanRegions =[
   'ams2', 'ams3', 'fra1', 'lon1', 'nyc1', 'nyc2', 'nyc3', 'sfo1', 'sgp1',
-  'tor1',
+  'tor1'
 ];
 const digitalOceanSizes = [
   '512mb', '1gb', '2gb', '4gb', '8gb', '16gb', '32gb', '48gb', '64gb', 'm-16gb',
-  'm-32gb', 'm-64gb', 'm-128gb', 'm-224gb',
+  'm-32gb', 'm-64gb', 'm-128gb', 'm-224gb'
 ];
 
 const awsQuestions = [
@@ -96,25 +96,25 @@ const awsQuestions = [
     message: 'Cloud66 - Server - Size',
     default: 0,
     validate: atLeastOne,
-    choices: awsSizes,
+    choices: awsSizes
   }, {
     name: 'c66ServerRegion',
     type: 'list',
     message: 'Cloud66 - Server - Region',
     validate: atLeastOne,
     choices: awsRegions,
-    default: 0,
+    default: 0
   }, {
     name: 'c66ServerSubnetId',
     type: 'input',
     message: 'Cloud66 - Server - Subnet ID',
-    default: null,
+    default: null
   }, {
     name: 'c66VpcId',
     type: 'input',
     message: 'Cloud66 - Configuration - VPC Id',
-    default: null,
-  },
+    default: null
+  }
 ];
 
 const digitalOceanQuestions = [
@@ -124,20 +124,20 @@ const digitalOceanQuestions = [
     message: 'Cloud66 - Server - Size',
     default: 0,
     validate: atLeastOne,
-    choices: digitalOceanSizes,
+    choices: digitalOceanSizes
   }, {
     name: 'c66ServerRegion',
     type: 'list',
     message: 'Cloud66 - Server - Region',
     default: 0,
     validate: atLeastOne,
-    choices: digitalOceanRegions,
-  },
+    choices: digitalOceanRegions
+  }
 ];
 
 const vendorsQuestions = {
   aws: awsQuestions,
-  digitalocean: digitalOceanQuestions,
+  digitalocean: digitalOceanQuestions
 };
 
 
@@ -162,20 +162,20 @@ module.exports = class extends Generator {
         message: 'Cloud66 - Organization name:',
         default: 'acme',
         validate: notEmpty,
-        store: true,
+        store: true
       }, {
         name: 'c66NamingPrefix',
         type: 'input',
         message: 'Cloud66 - Name prefix:',
         default: 'acme',
-        store: true,
+        store: true
       }, {
         name: 'c66Environments',
         type: 'checkbox',
         message: 'Cloud66 - Environment:',
         choices: c66AvailableEnviroments,
-        validate: atLeastOne,
-      },
+        validate: atLeastOne
+      }
     ]).then(function(props) {
       this.props = props;
       this.props.environments = {};
