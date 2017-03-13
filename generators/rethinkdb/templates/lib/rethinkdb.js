@@ -31,7 +31,7 @@ rethinkDbService.disconnect = function() {
 
   return rethinkDbService.r.getPoolMaster().drain()
     .then(() => self)
-    .catch((err) => {
+    .catch(err => {
       logger.error('Rethink DB cannot close its connections', err);
       return Promise.reject(err);
     });
@@ -50,7 +50,7 @@ rethinkDbService.checkDatabaseExists = function(databaseName) {
     return Promise.reject(error);
   }
 
-  return self.r.dbList().then((databases) => {
+  return self.r.dbList().then(databases => {
     const dbExists = databases.has(databaseName);
     return dbExists;
   });
@@ -59,7 +59,7 @@ rethinkDbService.checkDatabaseExists = function(databaseName) {
 rethinkDbService.createDatabase = function(databaseName) {
   const self = this;
 
-  return this.checkDatabaseExists(databaseName).then((dbExists) => {
+  return this.checkDatabaseExists(databaseName).then(dbExists => {
     if (dbExists) {
       return;
     }
@@ -67,7 +67,7 @@ rethinkDbService.createDatabase = function(databaseName) {
     return self.r.dbCreate(databaseName);
   }).then(() => {
     return;
-  }).catch((err) => {
+  }).catch(err => {
     logger.error(`Cannot create database ${databaseName}`, err);
     return Promise.reject(err);
   });
@@ -81,12 +81,12 @@ rethinkDbService.checkTableExists = function(databaseName, tableName) {
     return Promise.reject(error);
   }
 
-  return this.checkDatabaseExists(databaseName).then((dbExists) => {
+  return this.checkDatabaseExists(databaseName).then(dbExists => {
     if (!dbExists) {
       return Promise.reject(false);
     }
 
-    return self.r.db(databaseName).tableList().then((tables) => {
+    return self.r.db(databaseName).tableList().then(tables => {
       const tableExists = tables.has(tableName);
       return tableExists;
     });
@@ -96,16 +96,16 @@ rethinkDbService.checkTableExists = function(databaseName, tableName) {
 rethinkDbService.createTable = function(databaseName, tableName, primaryKey = 'id') {
   const self = this;
 
-  return this.checkTableExists(databaseName, tableName).then((tableExists) => {
+  return this.checkTableExists(databaseName, tableName).then(tableExists => {
     if (tableExists) {
       return;
     }
 
     return self.r.db(databaseName).tableCreate(tableName, {
       primaryKey: primaryKey
-    }).then((result) => {
+    }).then(result => {
       return;
-    }).catch((err) => {
+    }).catch(err => {
       logger.error(`Cannot create table ${tableName} on database ${databaseName}`, err);
       return Promise.reject(err);
     });
@@ -116,14 +116,14 @@ rethinkDbService.createTable = function(databaseName, tableName, primaryKey = 'i
 rethinkDbService.get = function(databaseName, tableName, filters) {
   const self = this;
 
-  return this.checkTableExists(databaseName, tableName).then((tableExists) => {
+  return this.checkTableExists(databaseName, tableName).then(tableExists => {
     if (!tableExists) {
       const error = new Error(`Table ${tableName} were not found`);
       return Promise.reject(error);
     }
 
     return self.r.db(databaseName).table(tableName).filter(filters);
-  }).catch((err) => {
+  }).catch(err => {
     logger.error(`Cannot get data from ${databaseName}.${tableName}`, err);
   });
 };
@@ -136,7 +136,7 @@ rethinkDbService.set = function(databaseName, tableName, objectToStore) {
     return Promise.reject(error);
   }
 
-  return this.checkTableExists(databaseName, tableName).then((tableExists) => {
+  return this.checkTableExists(databaseName, tableName).then(tableExists => {
     if (!tableExists) {
       const error = new Error(`Table ${tableName} were not found`);
       return Promise.reject(error);
@@ -144,7 +144,7 @@ rethinkDbService.set = function(databaseName, tableName, objectToStore) {
 
     return self.r.db(databaseName).table(tableName).insert(objectToStore, {
       conflict: 'update'
-    }).catch((err) => {
+    }).catch(err => {
       logger.error(`Cannot insert into ${databaseName}.${tableName}`, objectToStore, err);
       return Promise.reject(err);
     });

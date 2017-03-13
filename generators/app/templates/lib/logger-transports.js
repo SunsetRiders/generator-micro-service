@@ -36,5 +36,5 @@ const availableTransports = {
 };
 
 module.exports = config.transports
-  .map((transport) => availableTransports[transport])
-  .filter((transport) => transport);
+  .map(transport => availableTransports[transport])
+  .filter(transport => transport);

@@ -24,7 +24,7 @@ module.exports = {
     "strict": [ERROR, "global"],
     "max-len": [ERROR, 120, 2],
     "no-unused-expressions": OFF,
-    "arrow-parens": [ERROR, "always"],
+    "arrow-parens": [ERROR, "as-needed"],
     "dot-location": [OFF, "property"],
     "comma-dangle": [ERROR, "never"],
     "require-jsdoc": [ERROR, {

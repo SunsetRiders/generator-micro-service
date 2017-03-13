@@ -22,7 +22,7 @@ const logConfig = {
   meta:           true,
   mode:           'request',
   statusLevels:   true,
-  transports:     transports.map((transport) => transport.call({}, mode))
+  transports:     transports.map(transport => transport.call({}, mode))
 };
 
 const constructor = expressWinston.logger;

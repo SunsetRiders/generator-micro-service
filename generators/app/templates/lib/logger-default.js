@@ -18,7 +18,7 @@ const mode      = 'default';
 const logConfig = {
   exitOnError:  false,
   level:        config.level,
-  transports:   transports.map((transport) => transport.call({}, mode))
+  transports:   transports.map(transport => transport.call({}, mode))
 };
 
 const constructor = winston.Logger;
