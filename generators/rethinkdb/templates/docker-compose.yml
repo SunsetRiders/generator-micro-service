@@ -1,0 +1,9 @@
+# rethinkdb service
+# keep 2 spaces indentation so it can be appended
+  rethinkdb:
+    image: rethinkdb
+    mem_limit: 800m
+    ports:
+      - '28015:28015' # Client Driver connection
+      - '29015:29015' # Intracluster connections
+      - '8080:8080' # Administrative HTTP connections
