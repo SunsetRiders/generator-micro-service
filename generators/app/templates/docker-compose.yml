@@ -1,16 +1,5 @@
 version: '2'
 services:
-  rethinkdb:
-    image: rethinkdb
-    mem_limit: 800m
-    ports:
-      - '28015:28015' # Client Driver connection
-      - '29015:29015' # Intracluster connections
-      - '8080:8080' # Administrative HTTP connections
-  postgres:
-    image: postgres
-    ports:
-      - '5432:5432'
   api:
     build:
       context: .

@@ -1,7 +1,8 @@
-const fs        = require('fs');
-const chalk     = require('chalk');
-const Generator = require('yeoman-generator');
-const importTemplateFiles = require('../lib/import-template-files');
+const chalk                         = require('chalk');
+const Generator                     = require('yeoman-generator');
+const importTemplateFiles           = require('../lib/import-template-files');
+const appendFileIntoAnotherIfExists = require('../lib/append-file-into-another-if-exists');
+
 const importTemplateFilesDefault  = importTemplateFiles(filename => filename)(filename => filename);
 
 module.exports = class extends Generator {
@@ -19,25 +20,13 @@ module.exports = class extends Generator {
       'lib/rethinkdb.js',
       'config/rethinkdb.js'
     ]);
-    const errMessage = '\n' +
-      chalk.bgRed('RethinkDB environment variables could not be appended in .env.example file, ' +
+    const errMessage = chalk.bgRed('RethinkDB environment variables could not be appended in .env.example file, ' +
       'please do it yourself.');
     // getting the environment variables from template file
-    fs.readFile(this.templatePath('env.rethinkdb'), 'utf8', (err, fileContents) => {
-      if (err) {
-        this.log(err);
-        this.log(errMessage);
-        return;
-      }
-      // appending it to .env.example
-      fs.appendFile(this.destinationPath('.env.example'), fileContents, err => {
-        if (err) {
-          this.log(err);
-          this.log(errMessage);
-          return;
-        }
-      });
-    });
+    appendFileIntoAnotherIfExists(this)('env.rethinkdb')('.env.example')(errMessage);
+    appendFileIntoAnotherIfExists(this)('docker-compose.yml')('docker-compose.yml')(
+      chalk.bgRed('Cannot set up rethinkdb service in docker-compose.yml')
+    );
   }
 
   install() {
