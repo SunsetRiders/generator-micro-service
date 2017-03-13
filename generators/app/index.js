@@ -11,8 +11,8 @@ const nodeVersionList     = require('./node-versions');
 const validateGitUri      = require('./lib/validate-git-uri');
 const validateServiceName = require('./lib/validate-service-name');
 
-const importTemplateFilesDefault  = importTemplateFiles((filename) => filename)((filename) => filename);
-const importTemplateFilesDotfiles = importTemplateFiles((filenames) => filenames[0])((filenames) => filenames[1]);
+const importTemplateFilesDefault  = importTemplateFiles(filename => filename)(filename => filename);
+const importTemplateFilesDotfiles = importTemplateFiles(filenames => filenames[0])(filenames => filenames[1]);
 
 const choicesDatabases = [
   {
@@ -174,8 +174,14 @@ module.exports = class extends Generator {
   testsFolder() {
     importTemplateFilesDefault(this)([
       'tests/mocha.opts',
-      'tests/functional/api-test.js',
-      'tests/unit/config-test.js'
+      'tests/mocha-debug.opts',
+      'tests/unit/config-test.js',
+      'tests/functional/functional-framework.js',
+      'tests/functional/runner-configs.js',
+      'tests/functional/framework-runner.js',
+      'tests/functional/get-api-docs-tests.js',
+      'tests/functional/get-not-found-tests.js',
+      'tests/functional/README'
     ]);
   }
 
@@ -198,12 +204,14 @@ module.exports = class extends Generator {
       'lib/logger-request.js',
       'lib/logger-transports.js',
       'lib/logger.js',
+      'lib/generate-curl.js',
       'lib/openapi-generator.js'
     ]);
   }
 
   srcFolder() {
     importTemplateFilesDefault(this)([
+      'src/services/template-service.js',
       'src/doc.json'
     ]);
   }

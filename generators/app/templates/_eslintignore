@@ -8,3 +8,4 @@ swagger.*
 README.md
 package.json
 client/src/lib/*
+.eslintrc.js
