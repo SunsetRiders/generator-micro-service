@@ -13,7 +13,7 @@ describe('generator-generic-service:app', function() {
     assert.file([
       'package.json',
       'Dockerfile',
-      'docker-compose.yml',
+      'docker-compose.yml'
     ]);
   });
 });

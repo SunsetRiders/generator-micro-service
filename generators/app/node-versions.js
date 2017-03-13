@@ -3,5 +3,5 @@ module.exports = [
   '6.10',
   '7',
   '7.7',
-  'latest',
+  'latest'
 ];

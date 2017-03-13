@@ -10,16 +10,16 @@ const Api = require('../../lib/api');
 const api = Api.instance();
 
 describe('Funcional Tests', () => {
-  before(done => {
+  before((done) => {
     api.start(done);
   });
 
-  after(done => {
+  after((done) => {
     api.stop(done);
   });
 
   // Import tests, as specified on the config file...
-  runnerConfigs.testFilesToRun.forEach(testFileToAdd => {
+  runnerConfigs.testFilesToRun.forEach((testFileToAdd) => {
     require('./' + testFileToAdd);
 
     // Dinamically construct the tests
@@ -52,12 +52,12 @@ describe('Funcional Tests', () => {
 
           return Promise.resolve(request)
             .then(rp)
-            .catch(errorResponse => errorResponse)
-            .tap(response => {
+            .catch((errorResponse) => errorResponse)
+            .tap((response) => {
               framework.lastResponse = response;
               framework.verifyStatusCode(response.statusCode, testData.expectedStatusCode);
             })
-            .then(response => {
+            .then((response) => {
               if (testData.bodyValidator) {
                 try {
                   let body = response.body || response.error;
@@ -76,7 +76,7 @@ describe('Funcional Tests', () => {
               }
             })
             .catch(
-              error => framework.prettifyError(
+              (error) => framework.prettifyError(
                 testData.expectedStatusCode,
                 request,
                 framework.lastResponse,
