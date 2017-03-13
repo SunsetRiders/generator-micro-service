@@ -11,8 +11,8 @@ const nodeVersionList     = require('./node-versions');
 const validateGitUri      = require('./lib/validate-git-uri');
 const validateServiceName = require('./lib/validate-service-name');
 
-const importTemplateFilesDefault  = importTemplateFiles((filename) => filename)((filename) => filename);
-const importTemplateFilesDotfiles = importTemplateFiles((filenames) => filenames[0])((filenames) => filenames[1]);
+const importTemplateFilesDefault  = importTemplateFiles(filename => filename)(filename => filename);
+const importTemplateFilesDotfiles = importTemplateFiles(filenames => filenames[0])(filenames => filenames[1]);
 
 const choicesDatabases = [
   {

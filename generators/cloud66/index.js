@@ -179,7 +179,7 @@ module.exports = class extends Generator {
     ]).then(function(props) {
       this.props = props;
       this.props.environments = {};
-      props.c66Environments.forEach((env) => {
+      props.c66Environments.forEach(env => {
         this.props.environments[env] = {};
       });
       return props.c66Environments;
@@ -190,12 +190,12 @@ module.exports = class extends Generator {
     const [currentEnv, ...remainingEnvs] = environments;
     if (currentEnv) {
       this.log(chalk.bold('Configuration for environment: ' + currentEnv));
-      return this.prompt(commonQuestions).then((props) => {
+      return this.prompt(commonQuestions).then(props => {
         this.props.environments[currentEnv] = props;
         return vendorsQuestions[props.c66ServerVendor];
-      }).then((questions) => {
+      }).then(questions => {
         return this.prompt(questions);
-      }).then((props) => {
+      }).then(props => {
         Object.assign(this.props.environments[currentEnv], props);
         return this._setupEnvironments(remainingEnvs);
       });
@@ -206,7 +206,7 @@ module.exports = class extends Generator {
     mkdirp('.cloud66');
     const oldDestinationRoot = this.destinationRoot();
     this.destinationRoot(this.destinationPath('.cloud66'));
-    this.props.c66Environments.forEach((env) => {
+    this.props.c66Environments.forEach(env => {
       const context = _.assign({}, this.props, this.props.environments[env],
         this.options);
       this.fs.copyTpl(

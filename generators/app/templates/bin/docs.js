@@ -26,11 +26,11 @@ console.log('Generating the swagger.yaml docs');
 
 Promise.try(() => api.start())
   .then(()       => rp(options))
-  .then((response) => YAML.stringify(JSON.parse(response)))
-  .then((yaml)     => writeFile(swaggerFilePath, yaml, 'utf8'))
+  .then(response => YAML.stringify(JSON.parse(response)))
+  .then(yaml     => writeFile(swaggerFilePath, yaml, 'utf8'))
   .then(()       => console.log('swagger.yaml updated.'))
   .then(()       => api.stop())
-  .catch((err)     => {
+  .catch(err     => {
     console.log(err);
     process.exit(1);
   });
