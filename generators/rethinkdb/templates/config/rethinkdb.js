@@ -1,9 +1,16 @@
-/**
- Load env vars from .env file
- */
+const fs   = require('fs');
+const env  = require('getenv');
+
+try {
+  fs.accessSync('.env', fs.F_OK);
+  require('dotenv').config({silent: false});
+} catch (e) {
+  console.log('Not using dotenv');
+}
+
 const rethinkConfig = {
   authKey: env.string('RETHINKDB_AUTHKEY', ''),
-  bufferSize: env.int('RETHINKDB_BUFFER_SIZE', null),
+  bufferSize: env.int('RETHINKDB_BUFFER_SIZE', ''),
   db: env.string('RETHINKDB_DATABASE'),
   host: env.string('RETHINKDB_HOST'),
   max: env.int('RETHINKDB_MAX', null),
@@ -11,27 +18,46 @@ const rethinkConfig = {
   password: env.string('RETHINKDB_USER_PASSWORD', ''),
   port: env.int('RETHINKDB_PORT'),
   ssl: {
-    ca: env.string('RETHINKDB_SSL_CA', '')
+    ca: env.string('RETHINKDB_SSL_CA', '').split('\\n').join('\n')
   },
+  timeout: env.int('RETHINKDB_TIMEOUT', 300),
   timeoutError: env.int('RETHINKDB_TIMEOUT_ERROR', 5000),
   timeoutGb: env.int('RETHINKDB_TIMEOUT_GB', null),
   user: env.string('RETHINKDB_USER', ''),
-  usersTable: env.string('RETHINKDB_USERS_TABLE', ''),
-  credentialsTable: env.string('RETHINKDB_CREDENTIALS_TABLE', ''),
-  invitationsTable: env.string('RETHINKDB_INVITATIONS_TABLE', 'invitations'),
-  invitationsTableOrderingIndex: env.string('RETHINKDB_INVITATIONS_TABLE_ORDERING_INDEX', 'invitations_ordering_index'),
-  chartsTable: env.string('RETHINKDB_CHARTS_TABLE', '')
+  tableNames: {
+    // write your tables config here
+  }
 };
 
-if (rethinkConfig.authKey === '') {
-  delete rethinkConfig.authKey;
-}
-if (rethinkConfig.user === '') {
-  delete rethinkConfig.user;
-  delete rethinkConfig.password;
-}
-if (rethinkConfig.ssl.ca === '') {
-  delete rethinkConfig.ssl;
-}
+let configs = Object.keys(rethinkConfig).reduce((obj, key) => {
+  if (rethinkConfig[key]) {
+    switch (key) {
+      case 'authKey':
+      case 'user':
+        if (rethinkConfig[key] === '') {
+          return obj;
+        }
+        break;
+      case 'password':
+        if (rethinkConfig.user === '') {
+          return obj;
+        }
+        break;
+      case 'ssl':
+        if (rethinkConfig[key] && rethinkConfig[key].ca && rethinkConfig[key].ca !== '') {
+          obj[key] = rethinkConfig[key];
+          // console.log(rethinkConfig.ssl.ca);
+          return obj;
+        }
+        break;
+      default:
+    }
+  } else {
+    return obj;
+  }
 
-module.exports = rethinkConfig;
+  obj[key] = rethinkConfig[key];
+  return obj;
+}, {});
+
+module.exports = {rethinkdb: configs};

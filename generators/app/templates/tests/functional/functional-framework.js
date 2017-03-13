@@ -22,7 +22,7 @@ let framework = {
 /**
  * It register a new functional test to be run, within a test file.
  *
- * @param {object} testData
+ * @param {object} testData An object representing a functional test
  * @param {string} testData.testName The test name
  * @param {string} testData.httpMethod The HTTP method. 'GET', 'POST', 'HEAD', 'PATCH', 'PUT' and so on
  * @param {string} testData.routePath The crude route path, without the api/version stuff. DON'T put / in the beginnin
@@ -41,8 +41,8 @@ framework.addNewFunctionalTest = function(testData) {
 /**
  * Store data globally in the framework, so each test file can share some information.
  *
- * @param {string | number} key
- * @param {string | number | object | null | undefined} value
+ * @param {string | number} key The key to retrieve the value
+ * @param {string | number | object | null | undefined} value The value to store
  */
 framework.storeData = function(key, value) {
   framework.dataStorage.add(key, value);
@@ -51,7 +51,7 @@ framework.storeData = function(key, value) {
 /**
  * Retrieve global data saved in the framework.
  *
- * @param {string | number} key
+ * @param {string | number} key The value key you wanna retrieve
  * @return {string | number | object | null | undefined} value
  */
 framework.getData = function(key) {
