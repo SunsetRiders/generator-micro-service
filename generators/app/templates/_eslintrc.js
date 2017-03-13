@@ -19,11 +19,11 @@ module.exports = {
   },
 
   "rules": {
-    "key-spacing": 0,
-    "no-multi-spaces": 0,
+    "key-spacing": OFF,
+    "no-multi-spaces": OFF,
     "strict": [ERROR, "global"],
     "max-len": [ERROR, 120, 2],
-    "no-unused-expressions": 0,
+    "no-unused-expressions": OFF,
     "arrow-parens": [OFF, "as-needed"],
     "dot-location": [OFF, "property"]
   }
