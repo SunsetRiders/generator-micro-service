@@ -20,10 +20,6 @@ const choicesDatabases = [
     checked: false
   },
   {
-    name: 'Redis',
-    checked: false
-  },
-  {
     name: 'RethinkDB',
     checked: false
   }
@@ -236,12 +232,6 @@ module.exports = class extends Generator {
           case 'Postgres':
             _this.composeWith(
               'micro-service:postgres',
-              {}
-            );
-            break;
-          case 'Redis':
-            _this.composeWith(
-              'micro-service:redis',
               {}
             );
             break;
