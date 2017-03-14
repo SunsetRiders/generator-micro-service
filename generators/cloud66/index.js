@@ -45,6 +45,7 @@ const commonQuestions = [
     name: 'c66ServerKeyName',
     message: 'Cloud66 - Server - Key Name',
     type: 'input',
+    default: 'Cloud66',
     validate: notEmpty
   }, {
     name: 'c66ServerVendor',

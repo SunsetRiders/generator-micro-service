@@ -278,10 +278,12 @@ module.exports = class extends Generator {
     if (!this.props.databases.length) {
       this.log('\n' + chalk.bold('No databases to set and configure.'));
     }
-    this.log('\n' +
-      chalk.underline.bold('Without a github repository it is not possible to start Cloud66 and Codeship.') +
-      '\nending...'
-    );
+    if (!this.props.github && (this.props.codeship || this.props.cloud66)) {
+      this.log('\n' +
+        chalk.underline.bold('Without a github repository it is not possible to start Cloud66 and Codeship.') +
+        '\nending...'
+      );
+    }
   }
 
   end() {
