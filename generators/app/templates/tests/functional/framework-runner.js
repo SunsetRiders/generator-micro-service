@@ -55,7 +55,7 @@ describe('Funcional Tests', () => {
             .catch(errorResponse => errorResponse)
             .tap(response => {
               framework.lastResponse = response;
-              framework.verifyStatusCode(response.statusCode, testData.expectedStatusCode);
+              return framework.verifyStatusCode(response.statusCode, testData.expectedStatusCode);
             })
             .then(response => {
               if (testData.bodyValidator) {

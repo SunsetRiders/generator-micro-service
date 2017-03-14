@@ -220,7 +220,8 @@ module.exports = class extends Generator {
 
   srcRoutesFolder() {
     importTemplateFilesDefault(this)([
-      'src/routes/api-docs.js'
+      'src/routes/api-docs.js',
+      'src/routes/health.js'
     ]);
   }
 
