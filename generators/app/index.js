@@ -214,7 +214,9 @@ module.exports = class extends Generator {
 
   srcServicesFolder() {
     importTemplateFilesDefault(this)([
-      'src/services/template-service.js'
+      'src/services/template-service.js',
+      'src/models/.keep',
+      'src/assets/.keep'
     ]);
   }
 
