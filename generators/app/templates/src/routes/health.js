@@ -9,13 +9,14 @@ function health(req, res) {
 }
 
 health.apiDoc = {
-  summary: 'System health',
-  description: "This route always returns 200, empty. Used by the load balancer",
+  summary: 'System Health Check',
+  description: 'This route always returns 200 OK with no body. Used to provided a ping like service to confirm that ' +
+    'this service is running.',
   security: [],
   responses: {
     200: {
       schema: {},
-      description: "Success"
+      description: 'Success'
     }
   }
 };
