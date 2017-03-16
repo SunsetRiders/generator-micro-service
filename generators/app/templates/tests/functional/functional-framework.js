@@ -67,7 +67,7 @@ framework.verifyStatusCode = function(retrievedStatusCode, expectedStatusCode) {
     return Promise.resolve();
   }
 
-  const error = new Error('Expecting', expectedStatusCode, 'but got', retrievedStatusCode);
+  const error = new Error('Expecting ' + expectedStatusCode + ' but got ' + retrievedStatusCode);
   return Promise.reject(error);
 };
 
