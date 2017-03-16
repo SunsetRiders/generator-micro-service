@@ -6,8 +6,8 @@
   - [ ] I run `npm tests` with success
   - [ ] I run `npm run test:unit` with success
   - [ ] I run `npm run test:lint` with success
-  - [ ] I run `npm run test:contract` with success
-  - [ ] I run `npm run test:contract:debug` with success
+  - [ ] I run `npm run test:functional` with success
+  - [ ] I run `npm run test:functional:debug` with success
 
 ## Deploy checklist
 
