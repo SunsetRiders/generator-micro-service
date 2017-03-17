@@ -3,11 +3,10 @@
 ## Testing checklist
 
   - [ ] I did manual tests
-  - [ ] I run `npm tests` with success
+  - [ ] I run `npm test` with success
   - [ ] I run `npm run test:unit` with success
   - [ ] I run `npm run test:lint` with success
   - [ ] I run `npm run test:functional` with success
-  - [ ] I run `npm run test:functional:debug` with success
 
 ## Deploy checklist
 
