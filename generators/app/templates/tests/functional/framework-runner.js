@@ -58,7 +58,7 @@ describe('Funcional Tests', () => {
               return framework.verifyStatusCode(response.statusCode, testData.expectedStatusCode);
             })
             .then(response => {
-              if (testData.bodyValidator) {
+              if (testData.responseValidator) {
                 try {
                   let body = response.body || response.error;
 
@@ -69,7 +69,7 @@ describe('Funcional Tests', () => {
                     // It's probably already parsed
                   }
 
-                  return testData.bodyValidator(body);
+                  return testData.responseValidator(body);
                 } catch (error) {
                   return Promise.reject(error);
                 }

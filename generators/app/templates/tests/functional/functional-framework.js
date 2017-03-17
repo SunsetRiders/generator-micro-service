@@ -29,7 +29,7 @@ let framework = {
  * @param {object} testData.extraHeaders An object where each key = Header name and value = Header value. Can be null
  * @param {object} testData.body A javascript object to sent in the body. Can be null
  * @param {number} testData.expectedStatusCode A number, like 200
- * @param {function} testData.bodyValidator A funct that returns a Promise or throws an error when something is wrong
+ * @param {function} testData.responseValidator A func that returns a Promise or throws an error when something is wrong
  */
 framework.addNewFunctionalTest = function(testData) {
   // Sanity

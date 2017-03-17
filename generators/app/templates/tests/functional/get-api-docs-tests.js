@@ -11,7 +11,7 @@ ff.addNewFunctionalTest({
   },
   body: null,
   expectedStatusCode: 200,
-  bodyValidator: body => {
-    expect(body.info.version).to.equal('1.0.0');
+  responseValidator: response => {
+    expect(response.info.version).to.equal('1.0.0');
   }
 });
