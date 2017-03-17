@@ -83,7 +83,12 @@ framework.prettifyError = function(
   newErrorMsg += '\t\t' + util.inspect(request) + '\n\n';
 
   newErrorMsg += '\t Received response: \n';
-  newErrorMsg += '\t\t' + util.inspect(response) + '\n\n';
+
+  let formattedResponse = util.inspect(response);
+  if (formattedResponse.length > 256) {
+    formattedResponse = formattedResponse.slice(0, 256) + ' ... Too Big (╯°益°)╯彡┻━┻';
+  }
+  newErrorMsg += '\t\t' + formattedResponse + '\n\n';
 
   newErrorMsg += '\t Used CURL: \n';
   newErrorMsg += '\t\t' + framework.generateCurl(request) + '\n\n';
