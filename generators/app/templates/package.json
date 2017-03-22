@@ -21,7 +21,7 @@
     "start": "node bin/api.js",
     "docs": "npm run docs:swagger:generate && npm run docs:swagger:validate",
     "docs:swagger:generate": "API_PORT=3001 node bin/docs.js",
-    "docs:swagger:validate": "swagger validate swagger.yaml",
+    "docs:swagger:validate": "swagger-tools validate swagger.yaml",
     "test": "npm run test:lint && npm run docs:swagger:validate && npm run test:unit && npm run test:functional && npm run test:merge",
     "test:lint": "eslint . --quiet",
     "test:unit": "LOGS_TRANSPORTS=file istanbul cover --include-all-sources -x 'bin/*' _mocha -- tests/unit --opts ./tests/mocha.opts && mv -f coverage/coverage.json coverage/unit.json",
@@ -38,7 +38,6 @@
     "istanbul-combine": "^0.3.0",
     "json2yaml": "^1.1.0",
     "mocha": "^3.0.1",
-    "swagger-cli": "^1.0.0-beta.2",
     "swagger-tools": "^0.10.1",
     "testdouble": "^1.6.0"
   },
